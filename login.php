@@ -129,7 +129,7 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
   <!-- título -->
   <div class="login-logo">
     <a href="../Lab01/index2.html">
-      <span class="linea1">Rut mi lider</span><br>
+      <span class="linea1">Fitness</span><br>
       <span class="linea2">Center</span>
     </a>
   </div>
