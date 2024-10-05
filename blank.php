@@ -35,7 +35,7 @@
     <!-- Sección de Planes y Precios -->
     <section id="pricing" style="padding: 50px 0; background-color: #333; color: white;">
         <div class="container text-center">
-            <h2 style="color: #FFA500;">Nuestros Planes</h2>
+            <h2 style="color: #FFA500;">Nuestros Planes?</h2>
             <div class="row mt-4">
                 <div class="col-md-4">
                     <div class="pricing-box" style="background-color: black; border: 2px solid #FFA500; padding: 30px; border-radius: 10px;">
