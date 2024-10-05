@@ -6,12 +6,12 @@ $mensaje = "";
 if (isset($_POST["mensaje"])) $mensaje = $_POST["mensaje"];
 if (isset($_GET["mensaje"])) $mensaje = $_GET["mensaje"];
 
-// Variable idregistro para manejar el ID del cliente
+// Variable idregistro para manejar el ID de la reserva
 $idregistro = "";
 if (isset($_POST["idregistro"])) $idregistro = $_POST["idregistro"];
 if ($idregistro) {
-    // Consulta SQL para eliminar una reserva
-    $sql = "DELETE FROM reserva_entrenamientos WHERE idcliente = '$idregistro'";
+    // Consulta SQL para eliminar una reserva usando `idreserva`
+    $sql = "DELETE FROM reserva_entrenamientos WHERE idreserva = '$idregistro'";
     dbQuery($sql);
     $mensaje = "3";
 }
@@ -42,8 +42,8 @@ include("sidebar.php");
             </div>
             <div class="card-body">
                 <?php
-                // Consulta SQL para obtener las reservas
-                $sql = "SELECT r.`idcliente`, r.`tipo_entrenamiento`, r.`num_participantes`, r.`lugar`, r.`fecha`, r.`hora`
+                // Consulta SQL para obtener las reservas, asegurando que se usa `idreserva` y no `idcliente`
+                $sql = "SELECT r.`idreserva`, r.`tipo_entrenamiento`, r.`num_participantes`, r.`lugar`, r.`fecha`, r.`hora`
                         FROM `reserva_entrenamientos` r
                         ORDER BY r.fecha";
                 $result = dbQuery($sql);
@@ -53,7 +53,7 @@ include("sidebar.php");
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID Cliente</th>
+                            <th>ID Reserva</th>
                             <th>Tipo de Entrenamiento</th>
                             <th>Número de Participantes</th>
                             <th>Lugar</th>
@@ -67,17 +67,17 @@ include("sidebar.php");
                         if ($total_registros > 0) {
                             while ($row = mysqli_fetch_array($result)) {
                                 echo "<tr>
-                                    <td>{$row['idcliente']}</td>
+                                    <td>{$row['idreserva']}</td>
                                     <td>{$row['tipo_entrenamiento']}</td>
                                     <td>{$row['num_participantes']}</td>
                                     <td>{$row['lugar']}</td>
                                     <td>{$row['fecha']}</td>
                                     <td>{$row['hora']}</td>
                                     <td class='text-center'>
-                                        <a class='btn btn-info btn-sm' href='reserva_entrenamientos_detalle.php?sAccion=edit&idcliente={$row['idcliente']}'>
+                                        <a class='btn btn-info btn-sm' href='reserva_entrenamientos_detalle.php?sAccion=edit&idreserva={$row['idreserva']}'>
                                             <i class='fas fa-pencil-alt'></i> Editar
                                         </a>
-                                        <a class='btn btn-danger btn-sm delete_btn' data-toggle='modal' data-target='#modal-delete' data-idregistro='{$row['idcliente']}'>
+                                        <a class='btn btn-danger btn-sm delete_btn' data-toggle='modal' data-target='#modal-delete' data-idregistro='{$row['idreserva']}'>
                                             <i class='fas fa-trash'></i> Eliminar
                                         </a>
                                     </td>

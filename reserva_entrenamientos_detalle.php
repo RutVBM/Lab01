@@ -18,7 +18,7 @@ if ($sAccion == "new") {
     $sSubTitulo = "Por favor, ingresar la información de la reserva:";
     $sCambioAccion = "insert";
     // Valores por defecto
-    $idcliente = "";
+    $idreserva = "";
     $tipo_entrenamiento = "";
     $lugar = "";
     $fecha = "";
@@ -31,12 +31,12 @@ elseif ($sAccion == "edit") {
     $sSubTitulo = "Por favor, actualizar la información de la reserva:";
     $sCambioAccion = "update";
 
-    // Obtener el ID del cliente desde GET
-    if (isset($_GET["idcliente"])) {
-        $idcliente = $_GET["idcliente"];
+    // Obtener el ID de la reserva desde GET
+    if (isset($_GET["idreserva"])) {
+        $idreserva = $_GET["idreserva"];
         
         // Buscar los últimos datos registrados
-        $sql = "SELECT * FROM reserva_entrenamientos WHERE idcliente = $idcliente";
+        $sql = "SELECT * FROM reserva_entrenamientos WHERE idreserva = $idreserva";
         $result = dbQuery($sql);
         if ($row = mysqli_fetch_array($result)) {
             $tipo_entrenamiento = $row["tipo_entrenamiento"];
@@ -50,7 +50,6 @@ elseif ($sAccion == "edit") {
 
 // Acción 3: Insertar una nueva reserva en la base de datos
 elseif ($sAccion == "insert") {
-    $idcliente = $_POST["idcliente"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
     $lugar = $_POST["lugar"];
     $fecha = $_POST["fecha"];
@@ -58,8 +57,8 @@ elseif ($sAccion == "insert") {
     $num_participantes = $_POST["num_participantes"];
     
     // SQL para insertar una nueva reserva
-    $sql = "INSERT INTO reserva_entrenamientos (idcliente, tipo_entrenamiento, lugar, fecha, hora, num_participantes) 
-            VALUES ('$idcliente', '$tipo_entrenamiento', '$lugar', '$fecha', '$hora', '$num_participantes')";
+    $sql = "INSERT INTO reserva_entrenamientos (tipo_entrenamiento, lugar, fecha, hora, num_participantes) 
+            VALUES ('$tipo_entrenamiento', '$lugar', '$fecha', '$hora', '$num_participantes')";
     dbQuery($sql);
     
     // Redirigir después de insertar
@@ -73,7 +72,7 @@ elseif ($sAccion == "insert") {
 
 // Acción 4: Actualizar datos de una reserva existente
 elseif ($sAccion == "update") {
-    $idcliente = $_POST["idcliente"];
+    $idreserva = $_POST["idreserva"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
     $lugar = $_POST["lugar"];
     $fecha = $_POST["fecha"];
@@ -82,7 +81,7 @@ elseif ($sAccion == "update") {
     
     // SQL para actualizar reserva
     $sql = "UPDATE reserva_entrenamientos SET tipo_entrenamiento = '$tipo_entrenamiento', lugar = '$lugar', fecha = '$fecha', 
-            hora = '$hora', num_participantes = '$num_participantes' WHERE idcliente = $idcliente";
+            hora = '$hora', num_participantes = '$num_participantes' WHERE idreserva = $idreserva";
     dbQuery($sql);
     
     // Redirigir después de actualizar
@@ -120,7 +119,7 @@ include("sidebar.php");
             <div class="card-body">
                 <form name="frmDatos" action="reserva_entrenamientos_detalle.php" method="post">
                     <input type="text" name="sAccion" value="<?php echo $sCambioAccion; ?>" hidden>
-                    <input type="text" name="idcliente" value="<?php echo $idcliente; ?>" hidden>
+                    <input type="text" name="idreserva" value="<?php echo $idreserva; ?>" hidden>
                     
                     <div class="form-group">
                         <label for="tipo_entrenamiento">Tipo de Entrenamiento:</label>
