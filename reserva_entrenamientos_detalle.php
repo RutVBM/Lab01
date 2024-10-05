@@ -14,7 +14,7 @@ if (isset($_GET["sAccion"])) {
 
 // Acción 1: Creación de una plantilla vacía de valores para una nueva reserva
 if ($sAccion == "new") {
-    $sTitulo = "Crear una reserva";
+    $sTitulo = "Crear una Reserva";
     $sSubTitulo = "Por favor, ingresar la información de la reserva:";
     $sCambioAccion = "insert";
     // Valores por defecto
