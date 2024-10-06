@@ -91,7 +91,7 @@
                     </ul>
                 </li>
 
-                <!-- Clientes (Desplegable) -->
+                <!-- Clientes (Modificado) -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" style="color: white;">
                         <i class="nav-icon fas fa-users"></i>
@@ -102,21 +102,27 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="cliente.php" class="nav-link" style="color: white;">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Clientes</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="venta.php" class="nav-link" style="color: white;">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Comprobantes de venta</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="reserva_entrenamientos.php" class="nav-link" style="color: white;">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Reserva de entrenamientos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="historial_sanciones.php" class="nav-link" style="color: white;">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Historial de Sanciones</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="planes_membresias.php" class="nav-link" style="color: white;">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Planes y Membresías</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="consultas_reclamos.php" class="nav-link" style="color: white;">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Consultas y Reclamos</p>
                             </a>
                         </li>
                     </ul>

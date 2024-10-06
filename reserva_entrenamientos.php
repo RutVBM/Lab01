@@ -6,16 +6,6 @@ $mensaje = "";
 if (isset($_POST["mensaje"])) $mensaje = $_POST["mensaje"];
 if (isset($_GET["mensaje"])) $mensaje = $_GET["mensaje"];
 
-// Variable idregistro para manejar el ID de la reserva
-$idregistro = "";
-if (isset($_POST["idregistro"])) $idregistro = $_POST["idregistro"];
-if ($idregistro) {
-    // Consulta SQL para eliminar una reserva usando `idreserva`
-    $sql = "DELETE FROM reserva_entrenamientos WHERE idreserva = '$idregistro'";
-    dbQuery($sql);
-    $mensaje = "3";
-}
-
 include("sidebar.php");
 ?>
 
@@ -42,7 +32,7 @@ include("sidebar.php");
             </div>
             <div class="card-body">
                 <?php
-                // Consulta SQL para obtener las reservas, asegurando que se usa `idreserva` y no `idcliente`
+                // Consulta SQL para obtener las reservas
                 $sql = "SELECT r.`idreserva`, r.`tipo_entrenamiento`, r.`num_participantes`, r.`lugar`, r.`fecha`, r.`hora`
                         FROM `reserva_entrenamientos` r
                         ORDER BY r.fecha";
@@ -77,9 +67,6 @@ include("sidebar.php");
                                         <a class='btn btn-info btn-sm' href='reserva_entrenamientos_detalle.php?sAccion=edit&idreserva={$row['idreserva']}'>
                                             <i class='fas fa-pencil-alt'></i> Editar
                                         </a>
-                                        <a class='btn btn-danger btn-sm delete_btn' data-toggle='modal' data-target='#modal-delete' data-idregistro='{$row['idreserva']}'>
-                                            <i class='fas fa-trash'></i> Eliminar
-                                        </a>
                                     </td>
                                 </tr>";
                             }
@@ -91,29 +78,6 @@ include("sidebar.php");
                 </table>
             </div>
         </div>
-
-        <!-- Modal para eliminar -->
-        <div class="modal fade" id="modal-delete">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form action="reserva_entrenamientos.php" method="post">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Advertencia</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="idregistro" id="idregistro">
-                            <p>¿Está seguro de que desea eliminar el registro seleccionado?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-danger">Eliminar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
     </section>
 </div>
 
@@ -127,14 +91,6 @@ include("sidebar.php");
             buttons: ["excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#listado_wrapper .col-md-6:eq(0)');
     });
-
-    // Modal delete
-    $('#modal-delete').on('show.bs.modal', function (e) {
-        var button = $(e.relatedTarget);
-        var idregistro = button.data('idregistro');
-        var modal = $(this);
-        modal.find('.modal-body #idregistro').val(idregistro);
-    });
 </script>
 
 <?php
@@ -143,10 +99,6 @@ if ($mensaje == '1') { ?>
     <script>toastr.success("La información se registró correctamente.");</script>
 <?php } elseif ($mensaje == '2') { ?>
     <script>toastr.info("La información se actualizó correctamente.");</script>
-<?php } elseif ($mensaje == '3') { ?>
-    <script>toastr.warning("La información se eliminó correctamente.");</script>
-<?php } else { ?>
-    <script>toastr.error("Lo sentimos, ocurrió un error.");</script>
 <?php } ?>
 
 <?php
