@@ -19,10 +19,10 @@ if ($sAccion == "new") {
     $sCambioAccion = "insert";
     // Valores por defecto
     $idreserva = "";
+    $nombre_cliente = "";
     $tipo_entrenamiento = "";
-    $lugar = "";
-    $fecha = "";
-    $hora = "";
+    $lugar_entrenamiento = "";
+    $fecha_reserva = "";
     $num_participantes = "";
 }
 // Acción 2: Editar datos existentes de una reserva
@@ -39,10 +39,10 @@ elseif ($sAccion == "edit") {
         $sql = "SELECT * FROM reserva_entrenamientos WHERE idreserva = $idreserva";
         $result = dbQuery($sql);
         if ($row = mysqli_fetch_array($result)) {
+            $nombre_cliente = $row["nombre_cliente"];
             $tipo_entrenamiento = $row["tipo_entrenamiento"];
-            $lugar = $row["lugar"];
-            $fecha = $row["fecha"];
-            $hora = $row["hora"];
+            $lugar_entrenamiento = $row["lugar_entrenamiento"];
+            $fecha_reserva = $row["fecha_reserva"];
             $num_participantes = $row["num_participantes"];
         }
     }
@@ -50,15 +50,15 @@ elseif ($sAccion == "edit") {
 
 // Acción 3: Insertar una nueva reserva en la base de datos
 elseif ($sAccion == "insert") {
+    $nombre_cliente = $_POST["nombre_cliente"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
-    $lugar = $_POST["lugar"];
-    $fecha = $_POST["fecha"];
-    $hora = $_POST["hora"];
+    $lugar_entrenamiento = $_POST["lugar_entrenamiento"];
+    $fecha_reserva = $_POST["fecha_reserva"];
     $num_participantes = $_POST["num_participantes"];
     
     // SQL para insertar una nueva reserva
-    $sql = "INSERT INTO reserva_entrenamientos (tipo_entrenamiento, lugar, fecha, hora, num_participantes) 
-            VALUES ('$tipo_entrenamiento', '$lugar', '$fecha', '$hora', '$num_participantes')";
+    $sql = "INSERT INTO reserva_entrenamientos (nombre_cliente, tipo_entrenamiento, lugar_entrenamiento, fecha_reserva, num_participantes) 
+            VALUES ('$nombre_cliente', '$tipo_entrenamiento', '$lugar_entrenamiento', '$fecha_reserva', '$num_participantes')";
     dbQuery($sql);
     
     // Redirigir después de insertar
@@ -73,15 +73,15 @@ elseif ($sAccion == "insert") {
 // Acción 4: Actualizar datos de una reserva existente
 elseif ($sAccion == "update") {
     $idreserva = $_POST["idreserva"];
+    $nombre_cliente = $_POST["nombre_cliente"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
-    $lugar = $_POST["lugar"];
-    $fecha = $_POST["fecha"];
-    $hora = $_POST["hora"];
+    $lugar_entrenamiento = $_POST["lugar_entrenamiento"];
+    $fecha_reserva = $_POST["fecha_reserva"];
     $num_participantes = $_POST["num_participantes"];
     
     // SQL para actualizar reserva
-    $sql = "UPDATE reserva_entrenamientos SET tipo_entrenamiento = '$tipo_entrenamiento', lugar = '$lugar', fecha = '$fecha', 
-            hora = '$hora', num_participantes = '$num_participantes' WHERE idreserva = $idreserva";
+    $sql = "UPDATE reserva_entrenamientos SET nombre_cliente = '$nombre_cliente', tipo_entrenamiento = '$tipo_entrenamiento', lugar_entrenamiento = '$lugar_entrenamiento', fecha_reserva = '$fecha_reserva', 
+            num_participantes = '$num_participantes' WHERE idreserva = $idreserva";
     dbQuery($sql);
     
     // Redirigir después de actualizar
@@ -120,6 +120,11 @@ include("sidebar.php");
                 <form name="frmDatos" action="reserva_entrenamientos_detalle.php" method="post">
                     <input type="text" name="sAccion" value="<?php echo $sCambioAccion; ?>" hidden>
                     <input type="text" name="idreserva" value="<?php echo $idreserva; ?>" hidden>
+
+                    <div class="form-group">
+                        <label for="nombre_cliente">Nombre del Cliente:</label>
+                        <input type="text" name="nombre_cliente" id="nombre_cliente" class="form-control" value="<?php echo $nombre_cliente; ?>" required>
+                    </div>
                     
                     <div class="form-group">
                         <label for="tipo_entrenamiento">Tipo de Entrenamiento:</label>
@@ -136,21 +141,16 @@ include("sidebar.php");
                     </div>
 
                     <div class="form-group">
-                        <label for="lugar">Lugar:</label>
-                        <select name="lugar" id="lugar" class="form-control" required>
-                            <option value="Aire Libre" <?php if($lugar == 'Aire Libre') echo 'selected'; ?>>Aire Libre</option>
-                            <option value="Instalaciones" <?php if($lugar == 'Instalaciones') echo 'selected'; ?>>Instalaciones</option>
+                        <label for="lugar_entrenamiento">Lugar:</label>
+                        <select name="lugar_entrenamiento" id="lugar_entrenamiento" class="form-control" required>
+                            <option value="Aire Libre" <?php if($lugar_entrenamiento == 'Aire Libre') echo 'selected'; ?>>Aire Libre</option>
+                            <option value="Instalaciones" <?php if($lugar_entrenamiento == 'Instalaciones') echo 'selected'; ?>>Instalaciones</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="fecha">Fecha:</label>
-                        <input type="date" name="fecha" id="fecha" class="form-control" value="<?php echo $fecha; ?>" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="hora">Hora:</label>
-                        <input type="time" name="hora" id="hora" class="form-control" value="<?php echo $hora; ?>" required />
+                        <label for="fecha_reserva">Fecha:</label>
+                        <input type="date" name="fecha_reserva" id="fecha_reserva" class="form-control" value="<?php echo $fecha_reserva; ?>" required />
                     </div>
 
                     <div class="form-group-buttons text-center">

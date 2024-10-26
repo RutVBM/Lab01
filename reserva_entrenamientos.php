@@ -33,9 +33,9 @@ include("sidebar.php");
             <div class="card-body">
                 <?php
                 // Consulta SQL para obtener las reservas
-                $sql = "SELECT r.`idreserva`, r.`tipo_entrenamiento`, r.`num_participantes`, r.`lugar`, r.`fecha`, r.`hora`
+                $sql = "SELECT r.`idreserva`, r.`nombre_cliente`, r.`tipo_entrenamiento`, r.`num_participantes`, r.`lugar_entrenamiento`, r.`fecha_reserva`
                         FROM `reserva_entrenamientos` r
-                        ORDER BY r.fecha";
+                        ORDER BY r.fecha_reserva";
                 $result = dbQuery($sql);
                 $total_registros = mysqli_num_rows($result);
                 ?>
@@ -44,11 +44,11 @@ include("sidebar.php");
                     <thead>
                         <tr>
                             <th>ID Reserva</th>
+                            <th>Nombre Cliente</th>
                             <th>Tipo de Entrenamiento</th>
                             <th>Número de Participantes</th>
                             <th>Lugar</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
+                            <th>Fecha de Reserva</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -58,11 +58,11 @@ include("sidebar.php");
                             while ($row = mysqli_fetch_array($result)) {
                                 echo "<tr>
                                     <td>{$row['idreserva']}</td>
+                                    <td>{$row['nombre_cliente']}</td>
                                     <td>{$row['tipo_entrenamiento']}</td>
                                     <td>{$row['num_participantes']}</td>
-                                    <td>{$row['lugar']}</td>
-                                    <td>{$row['fecha']}</td>
-                                    <td>{$row['hora']}</td>
+                                    <td>{$row['lugar_entrenamiento']}</td>
+                                    <td>{$row['fecha_reserva']}</td>
                                     <td class='text-center'>
                                         <a class='btn btn-info btn-sm' href='reserva_entrenamientos_detalle.php?sAccion=edit&idreserva={$row['idreserva']}'>
                                             <i class='fas fa-pencil-alt'></i> Editar
