@@ -1,7 +1,7 @@
 <?php
 // Configuración de la conexión a la base de datos
 $DBHost = "localhost";
-$DBname = "fitness center";  // Asegúrate de que el nombre de la base de datos no tenga espacios.
+$DBname = "fitness_center";  // Asegúrate de que el nombre de la base de datos no tenga espacios.
 $DBUser = "root";
 $DBPass = "";
 
