@@ -1,7 +1,9 @@
-<?php
+
+
+  <?php
 session_start();
 include ("conexion/database.php");
-
+//holaaa;
 if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
   //exit($_POST["correo"]."/".$_POST["clave"]);
   $correo = $_POST["correo"];
