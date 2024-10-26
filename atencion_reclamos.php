@@ -10,11 +10,11 @@ include("sidebar.php");
 <script type="text/javascript">
 // Función para crear una nueva atención de reclamo
 function NewReclamo() {
-    window.location.href = "atencion_reclamos_detalle.php?sAccion=new";
+    window.location.href = "reclamo_cliente_detalle.php?sAccion=new";
 }
 
-function EditReclamo(idreclamo) {
-    window.location.href = "atencion_reclamos_detalle.php?sAccion=edit&idreclamo=" + idreclamo;
+function EditReclamo(id_reclamo) {
+    window.location.href = "reclamo_cliente_detalle.php?sAccion=edit&id_reclamo=" + id_reclamo;
 }
 </script>
 
@@ -55,14 +55,13 @@ function EditReclamo(idreclamo) {
             </div>
 
             <?php
-            $sql = "SELECT r.idreclamo, r.idcliente, c.nombre AS nombre_cliente, r.descripcion, r.estado, r.fecha_reclamo 
-                    FROM atencion_reclamos r 
-                    JOIN cliente c ON r.idcliente = c.idcliente 
-                    WHERE r.idreclamo > 0";
+            $sql = "SELECT r.id_reclamo, r.id_cliente, r.tipo, r.detalle, r.fecha_reclamo, r.estado_reclamo, r.fecha_solucion
+                    FROM reclamos r
+                    WHERE r.id_reclamo > 0";
 
             if ($estado != "") {
-                $sql .= " AND r.estado = ?";
-                $stmt = dbQuery($sql, [$estado]); // Consulta preparada
+                $sql .= " AND r.estado_reclamo = ?";
+                $stmt = dbQuery($sql, [$estado]); // Consulta preparada con parámetro
             } else {
                 $stmt = dbQuery($sql); // Sin parámetros
             }
@@ -74,10 +73,13 @@ function EditReclamo(idreclamo) {
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Nombre del Cliente</th>
-                            <th>Descripción</th>
-                            <th>Estado</th>
+                            <th>ID Cliente</th>
+                            <th>Tipo</th>
+                            <th>ID Reclamo</th>
+                            <th>Detalle</th>
                             <th>Fecha de Reclamo</th>
+                            <th>Estado</th>
+                            <th>Fecha de Solución</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -85,21 +87,23 @@ function EditReclamo(idreclamo) {
                         <?php
                         if ($total_registros > 0) {
                             while ($row = $stmt->fetch_assoc()) {
-                                $estado_reclamo = $row["estado"] == "pendiente" ? "Pendiente" : "Resuelto";
                                 ?>
                                 <tr>
-                                    <td><?= $row["nombre_cliente"] ?></td>
-                                    <td><?= $row["descripcion"] ?></td>
-                                    <td><?= $estado_reclamo ?></td>
+                                    <td><?= $row["id_cliente"] ?></td>
+                                    <td><?= $row["tipo"] ?></td>
+                                    <td><?= $row["id_reclamo"] ?></td>
+                                    <td><?= $row["detalle"] ?></td>
                                     <td><?= $row["fecha_reclamo"] ?></td>
+                                    <td><?= $row["estado_reclamo"] == "pendiente" ? "Pendiente" : "Resuelto" ?></td>
+                                    <td><?= $row["fecha_solucion"] ?></td>
                                     <td>
-                                        <button type="button" class="btn btn-info" onclick="EditReclamo(<?= $row['idreclamo'] ?>);">Editar</button>
+                                        <button type="button" class="btn btn-info" onclick="EditReclamo(<?= $row['id_reclamo'] ?>);">Editar</button>
                                     </td>
                                 </tr>
                                 <?php
                             }
                         } else {
-                            echo "<tr><td colspan='5'>No existen reclamos registrados</td></tr>";
+                            echo "<tr><td colspan='8'>No existen reclamos registrados</td></tr>";
                         }
                         ?>
                     </tbody>

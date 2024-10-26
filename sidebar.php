@@ -62,7 +62,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="atencion_reclamos.php" class="nav-link" style="color: white;">
-                                <i class="far fa-circle nav-icon"></i><p>Atención de reclamos</p>
+                                <i class="far fa-circle nav-icon"></i><p>Atención de consultas y reclamos</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -111,7 +111,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="consultas_reclamos.php" class="nav-link" style="color: white;">
+                            <a href="reclamo_cliente.php" class="nav-link" style="color: white;">
                                 <i class="far fa-circle nav-icon"></i><p>Consultas y Reclamos</p>
                             </a>
                         </li>
