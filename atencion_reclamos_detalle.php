@@ -1,16 +1,15 @@
 <?php
 ob_start(); // Inicia el buffer de salida para evitar errores de header
-include("header.php"); 
-include_once("conexion/database.php"); 
+include("header.php");
+include_once("conexion/database.php");
 
-// Inicialización de variables
-$sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
-$sTitulo = $sAccion == "new" ? "Registrar un nuevo reclamo" : "Modificar Reclamo";
+$sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "edit";
+$sTitulo = "Modificar Reclamo";
 $id_reclamo = $_POST["id_reclamo"] ?? "";
 $id_cliente = $tipo = $detalle = $fecha_reclamo = $estado_reclamo = $fecha_solucion = "";
 
-// Verificar la acción y cargar datos si es necesario
-if ($sAccion == "edit" && isset($_GET["id_reclamo"])) {
+// Cargar datos del reclamo a editar si se proporciona un `id_reclamo`
+if (isset($_GET["id_reclamo"])) {
     $id_reclamo = $_GET["id_reclamo"];
 
     // Cargar datos del reclamo a editar
@@ -28,30 +27,20 @@ if ($sAccion == "edit" && isset($_GET["id_reclamo"])) {
     }
 }
 
-// Procesar inserción o actualización de datos
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+// Procesar actualización de datos
+if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
     $estado_reclamo = $_POST["estado_reclamo"];
     $fecha_solucion = $_POST["fecha_solucion"];
     $id_reclamo = $_POST["id_reclamo"];
 
-    if ($sAccion == "insert") {
-        // Insertar nuevo reclamo
-        $sql = "INSERT INTO reclamos (id_cliente, tipo, detalle, fecha_reclamo, estado_reclamo, fecha_solucion) 
-                VALUES (?, ?, ?, NOW(), ?, ?)";
-        dbQuery($sql, [$id_cliente, $tipo, $detalle, $estado_reclamo, $fecha_solucion]);
+    // Actualizar reclamo existente
+    $sql = "UPDATE reclamos 
+            SET estado_reclamo = ?, fecha_solucion = ? 
+            WHERE id_reclamo = ?";
+    dbQuery($sql, [$estado_reclamo, $fecha_solucion, $id_reclamo]);
 
-        header("Location: reclamo_cliente.php");
-        exit(); // Detener ejecución después de redirigir
-    } elseif ($sAccion == "update") {
-        // Actualizar reclamo existente
-        $sql = "UPDATE reclamos 
-                SET estado_reclamo = ?, fecha_solucion = ? 
-                WHERE id_reclamo = ?";
-        dbQuery($sql, [$estado_reclamo, $fecha_solucion, $id_reclamo]);
-
-        header("Location: reclamo_cliente.php");
-        exit(); // Detener ejecución después de redirigir
-    }
+    header("Location: atencion_reclamos.php?mensaje=success");
+    exit();
 }
 ?>
 
@@ -65,38 +54,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <section class="content">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Por favor, complete los datos del reclamo:</h3>
-            </div>
-
             <div class="card-body">
-                <form action="reclamo_cliente_detalle.php" method="post">
-                    <input type="hidden" name="sAccion" value="<?= $sAccion == 'new' ? 'insert' : 'update' ?>">
+                <form action="atencion_reclamos_detalle.php" method="post">
+                    <input type="hidden" name="sAccion" value="update">
                     <input type="hidden" name="id_reclamo" value="<?= $id_reclamo ?>">
 
+                    <!-- Campos de solo lectura -->
                     <div class="form-group">
                         <label for="id_cliente">ID Cliente:</label>
-                        <input type="text" name="id_cliente" class="form-control" value="<?= $id_cliente ?>" readonly>
+                        <input type="text" name="id_cliente" class="form-control-plaintext" value="<?= $id_cliente ?>" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="tipo">Tipo de Reclamo:</label>
-                        <input type="text" name="tipo" class="form-control" value="<?= $tipo ?>" readonly>
+                        <input type="text" name="tipo" class="form-control-plaintext" value="<?= $tipo ?>" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="detalle">Descripción del Reclamo:</label>
-                        <textarea name="detalle" class="form-control" readonly><?= $detalle ?></textarea>
+                        <textarea name="detalle" class="form-control-plaintext" rows="3" readonly><?= $detalle ?></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="fecha_reclamo">Fecha de Reclamo:</label>
-                        <input type="text" name="fecha_reclamo" class="form-control" value="<?= $fecha_reclamo ?>" readonly>
+                        <input type="text" name="fecha_reclamo" class="form-control-plaintext" value="<?= $fecha_reclamo ?>" readonly>
                     </div>
 
+                    <!-- Campos editables -->
                     <div class="form-group">
                         <label for="estado_reclamo">Estado:</label>
-                        <select name="estado_reclamo" class="form-control">
+                        <select name="estado_reclamo" class="form-control" required>
                             <option value="pendiente" <?= $estado_reclamo == 'pendiente' ? 'selected' : '' ?>>Pendiente</option>
                             <option value="resuelto" <?= $estado_reclamo == 'resuelto' ? 'selected' : '' ?>>Resuelto</option>
                         </select>
@@ -115,4 +102,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 
 <?php include("footer.php"); ?>
-<?php ob_end_flush(); // Enviar el contenido del buffer ?>
+<?php ob_end_flush(); ?>

@@ -1,6 +1,9 @@
 <?php
 include("header.php");
-include_once("conexion/database.php"); // Asegúrate de usar include_once para evitar múltiples inclusiones
+include_once("conexion/database.php");
+
+// Configura la zona horaria a Perú
+date_default_timezone_set('America/Lima');
 
 $estado = isset($_POST["estado"]) ? $_POST["estado"] : "";
 
@@ -8,7 +11,7 @@ include("sidebar.php");
 ?>
 
 <script type="text/javascript">
-// Función para crear una nueva atención de reclamo
+// Función para crear una nueva atención de reclamo o consulta
 function NewReclamo() {
     window.location.href = "reclamo_cliente_detalle.php?sAccion=new";
 }
@@ -23,7 +26,10 @@ function EditReclamo(id_reclamo) {
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Atención de Consultas y Reclamos</h1>
+                    <h1>Registro de Consultas y Reclamos</h1>
+                </div>
+                <div class="col-sm-6">
+                    <button type="button" class="btn btn-primary float-sm-right" onclick="NewReclamo();">Nuevo Reclamo o Consulta</button>
                 </div>
             </div>
         </div>
@@ -45,10 +51,7 @@ function EditReclamo(id_reclamo) {
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group">
-                                <button id="submit" name="button" value="submit" class="btn btn-primary">Consultar</button>
-                                <button type="button" name="button" value="Nuevo" class="btn btn-success" onclick="NewReclamo();">Nuevo Reclamo</button>
-                            </div>
+                            <button type="submit" class="btn btn-primary">Consultar</button>
                         </div>
                     </div>
                 </form>
@@ -62,9 +65,9 @@ function EditReclamo(id_reclamo) {
 
             if ($estado != "") {
                 $sql .= " AND r.estado_reclamo = ?";
-                $stmt = dbQuery($sql, [$estado]); // Consulta preparada con parámetro
+                $stmt = dbQuery($sql, [$estado]);
             } else {
-                $stmt = dbQuery($sql); // Sin parámetros
+                $stmt = dbQuery($sql);
             }
 
             $total_registros = $stmt->num_rows;
@@ -120,3 +123,5 @@ $(function () {
     }).buttons().container().appendTo('#listado_wrapper .col-md-6:eq(0)');
 });
 </script>
+
+

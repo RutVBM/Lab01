@@ -1,25 +1,26 @@
 <?php
-ob_start(); // Inicia el buffer de salida para evitar errores de header
-include("header.php"); 
-include_once("conexion/database.php"); 
+ob_start();
+include("header.php");
+include_once("conexion/database.php");
 
-// Inicialización de variables
+// Configura la zona horaria a Perú
+date_default_timezone_set('America/Lima');
+
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
-$sTitulo = $sAccion == "new" ? "Registrar un nuevo reclamo" : "Modificar Reclamo";
+$sTitulo = $sAccion == "new" ? "Registrar un nuevo reclamo o consulta" : "Modificar Reclamo";
 $id_reclamo = $_POST["id_reclamo"] ?? "";
-$id_cliente = $tipo = $detalle = $fecha_reclamo = "";
+$id_cliente = $tipo = $detalle = "";
 
 // Verificar la acción y cargar datos si es necesario
 if ($sAccion == "edit" && isset($_GET["id_reclamo"])) {
     $id_reclamo = $_GET["id_reclamo"];
 
     // Cargar datos del reclamo a editar
-    $stmt = dbQuery("SELECT id_cliente, tipo, detalle, fecha_reclamo FROM reclamos WHERE id_reclamo = ?", [$id_reclamo]);
+    $stmt = dbQuery("SELECT id_cliente, tipo, detalle FROM reclamos WHERE id_reclamo = ?", [$id_reclamo]);
     if ($stmt && $row = $stmt->fetch_assoc()) {
         $id_cliente = $row["id_cliente"];
         $tipo = $row["tipo"];
         $detalle = $row["detalle"];
-        $fecha_reclamo = $row["fecha_reclamo"];
     } else {
         echo "Error: Reclamo no encontrado.";
         exit();
@@ -31,25 +32,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id_cliente = $_POST["id_cliente"];
     $tipo = $_POST["tipo"];
     $detalle = $_POST["detalle"];
-    $fecha_reclamo = $_POST["fecha_reclamo"];
+    $fecha_reclamo = date("Y-m-d H:i:s"); // Captura la fecha y hora actual de Perú
 
     if ($sAccion == "insert") {
-        // Insertar nuevo reclamo
+        // Insertar nuevo reclamo con fecha y hora automáticas
         $sql = "INSERT INTO reclamos (id_cliente, tipo, detalle, fecha_reclamo) 
                 VALUES (?, ?, ?, ?)";
         dbQuery($sql, [$id_cliente, $tipo, $detalle, $fecha_reclamo]);
 
         header("Location: reclamo_cliente.php?mensaje=success");
-        exit(); // Detener ejecución después de redirigir
+        exit();
     } elseif ($sAccion == "update") {
-        // Actualizar reclamo existente
         $sql = "UPDATE reclamos 
-                SET id_cliente = ?, tipo = ?, detalle = ?, fecha_reclamo = ? 
+                SET tipo = ?, detalle = ? 
                 WHERE id_reclamo = ?";
-        dbQuery($sql, [$id_cliente, $tipo, $detalle, $fecha_reclamo, $id_reclamo]);
+        dbQuery($sql, [$tipo, $detalle, $id_reclamo]);
 
         header("Location: reclamo_cliente.php?mensaje=success");
-        exit(); // Detener ejecución después de redirigir
+        exit();
     }
 }
 ?>
@@ -64,10 +64,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <section class="content">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Por favor, complete los datos del reclamo:</h3>
-            </div>
-
             <div class="card-body">
                 <form action="reclamo_cliente_detalle.php" method="post">
                     <input type="hidden" name="sAccion" value="<?= $sAccion == 'new' ? 'insert' : 'update' ?>">
@@ -91,11 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <textarea name="detalle" class="form-control" required><?= $detalle ?></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label for="fecha_reclamo">Fecha de Reclamo:</label>
-                        <input type="date" name="fecha_reclamo" class="form-control" value="<?= $fecha_reclamo ?>" required>
-                    </div>
-
                     <button type="submit" class="btn btn-success">Guardar</button>
                 </form>
             </div>
@@ -104,4 +95,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 
 <?php include("footer.php"); ?>
-<?php ob_end_flush(); // Enviar el contenido del buffer ?>
+<?php ob_end_flush(); ?>
