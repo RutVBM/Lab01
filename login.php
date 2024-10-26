@@ -1,6 +1,4 @@
-
-
-  <?php
+<?php
 session_start();
 include ("conexion/database.php");
 

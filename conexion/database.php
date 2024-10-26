@@ -1,69 +1,83 @@
 <?php
+// Configuración de la conexión a la base de datos
+$DBHost = "localhost";
+$DBname = "fitness center";  // Asegúrate de que el nombre de la base de datos no tenga espacios.
+$DBUser = "root";
+$DBPass = "";
 
-function dbQuery($sql) {
-  // Reemplaza las variables con la información requerida para conectarse a la base de datos
-  $DBHost = "localhost";
-  // Cambia el nombre de la base de datos eliminando el espacio o asegúrate de que el nombre no tenga espacios.
-  $DBname = "fitness center";  // Asegúrate de que el nombre sea correcto y sin espacios.
-  $DBUser = "root";
-  $DBPass = "";
+// Crear la conexión
+$connDB = new mysqli($DBHost, $DBUser, $DBPass, $DBname);
 
-  // Establecer la conexión a la base de datos
-  $connDB = mysqli_connect($DBHost, $DBUser, $DBPass, $DBname);
+// Verificar si la conexión fue exitosa
+if ($connDB->connect_error) {
+    die("Error de conexión: " . $connDB->connect_error);
+}
 
-  // Verificar si la conexión ha sido exitosa
-  if (mysqli_connect_errno()) { 
-    echo "Error: No se pudo conectar a MySQL. " . mysqli_connect_error();
-    exit;
-  }
+// Función para ejecutar consultas SQL preparadas
+function dbQuery($query, $params = []) {
+    global $connDB;
 
-  // Ejecutar la consulta SQL
-  $result = mysqli_query($connDB, $sql);
+    // Preparar la consulta
+    $stmt = $connDB->prepare($query);
+    if (!$stmt) {
+        die("Error al preparar la consulta: " . $connDB->error);
+    }
 
-  // Verificar si la consulta fue exitosa
-  if (!$result) { 
-    echo "Error: No se pudo ejecutar la sentencia SQL: " . $sql . "<br>" . mysqli_error($connDB);
-    exit;
-  }
+    // Enlazar los parámetros si se pasan
+    if ($params) {
+        // Crear una cadena con los tipos de los parámetros (por defecto, todos 's' para string)
+        $types = str_repeat('s', count($params));
+        $stmt->bind_param($types, ...$params);
+    }
 
-  // Cerrar la conexión
-  mysqli_close($connDB);
+    // Ejecutar la consulta
+    if (!$stmt->execute()) {
+        die("Error en la ejecución de la consulta: " . $stmt->error);
+    }
 
-  // Devolver el resultado de la consulta
-  return $result;
+    // Obtener el resultado si la consulta es de tipo SELECT
+    $result = $stmt->get_result();
+
+    // Cerrar la sentencia
+    $stmt->close();
+
+    // Retornar el resultado para consultas SELECT, o true para INSERT/UPDATE/DELETE
+    return $result ? $result : true;
 }
 
 // FUNCIONES ADICIONALES
-function quitar_acentos($cadena) {
-  // Arregla caracteres extraños
-  $search = explode(",", "á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ");
-  $replace = explode(",", "a,e,i,o,u,n,A,E,I,O,U,N");
-  $cadena = str_replace($search, $replace, $cadena);
-  return $cadena;
-}
-
-function extraer_valor($sql) {
-  // Retorna el valor de la sentencia SQL
-  $resFuncion = dbQuery($sql);
-  if ($rowFuncion = mysqli_fetch_array($resFuncion)) {
-    return $rowFuncion["valor"];
-  } else {
-    return "";
-  }
-}
-
-function numero_documento($tipo) {
-  // Nos brinda el número siguiente de la Factura/Boleta
-  $numero = 1; // Valor por defecto
-  $sql = "SELECT (max(numero_documento) + 1) AS numero FROM venta WHERE tipo_documento = '$tipo'";
-  // Ejecutar la consulta SQL
-  $resFuncion = dbQuery($sql);
-  if ($rowFuncion = mysqli_fetch_array($resFuncion)) {
-    if ($rowFuncion["numero"]) {
-      $numero = $rowFuncion["numero"];
+if (!function_exists('quitar_acentos')) {
+    function quitar_acentos($cadena) {
+        $search = explode(",", "á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ");
+        $replace = explode(",", "a,e,i,o,u,n,A,E,I,O,U,N");
+        $cadena = str_replace($search, $replace, $cadena);
+        return $cadena;
     }
-  }
-  return $numero;
+}
+
+if (!function_exists('extraer_valor')) {
+    function extraer_valor($sql) {
+        $resFuncion = dbQuery($sql);
+        if ($rowFuncion = mysqli_fetch_array($resFuncion)) {
+            return $rowFuncion["valor"];
+        } else {
+            return "";
+        }
+    }
+}
+
+if (!function_exists('numero_documento')) {
+    function numero_documento($tipo) {
+        $numero = 1;
+        $sql = "SELECT (max(numero_documento) + 1) AS numero FROM venta WHERE tipo_documento = '$tipo'";
+        $resFuncion = dbQuery($sql);
+        if ($rowFuncion = mysqli_fetch_array($resFuncion)) {
+            if ($rowFuncion["numero"]) {
+                $numero = $rowFuncion["numero"];
+            }
+        }
+        return $numero;
+    }
 }
 
 ?>

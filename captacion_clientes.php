@@ -1,131 +1,116 @@
 <?php
 ob_start(); // Inicia el buffer de salida
+include_once("header.php");
+include_once("conexion/database.php"); // Usa include_once para evitar múltiples inclusiones
 
-include("header.php");
-
-// Filtrar por tipo de cliente si es necesario
 $tipo_cliente = isset($_POST["tipo_cliente"]) ? $_POST["tipo_cliente"] : "";
 
-include("sidebar.php");
+include_once("sidebar.php");
 
-// Eliminar captación si se recibe la acción delete
-if (isset($_GET['sAccion']) && $_GET['sAccion'] == 'delete' && isset($_GET['idcliente'])) {
-    $idcliente = $_GET['idcliente'];
-    $sql = "DELETE FROM captacion_clientes WHERE idcliente = $idcliente";
-    dbQuery($sql);
+// Eliminar una captación si se recibe la acción 'delete'
+if (isset($_GET['sAccion']) && $_GET['sAccion'] == 'delete' && isset($_GET['idcaptacion'])) {
+    $idcaptacion = $_GET['idcaptacion'];
+    $sql = "DELETE FROM captacion_clientes WHERE idcaptacion = ?";
+    dbQuery($sql, [$idcaptacion]);
     header("Location: captacion_clientes.php?mensaje=deleted");
     exit();
 }
 ?>
 
 <script type="text/javascript">
-// Redireccionar para crear una nueva captación
 function NewCaptacion() {
     window.location.href = "captacion_clientes_detalle.php?sAccion=new";
 }
 
-// Redireccionar para editar una captación existente
-function EditCaptacion(idcliente) {
-    window.location.href = "captacion_clientes_detalle.php?sAccion=edit&idcliente=" + idcliente;
+function EditCaptacion(idcaptacion) {
+    window.location.href = "captacion_clientes_detalle.php?sAccion=edit&idcaptacion=" + idcaptacion;
 }
 
-// Confirmar y eliminar captación
-function DeleteCaptacion(idcliente) {
+function DeleteCaptacion(idcaptacion) {
     if (confirm("¿Estás seguro de que deseas eliminar esta captación? Esta acción no se puede deshacer.")) {
-        window.location.href = "captacion_clientes.php?sAccion=delete&idcliente=" + idcliente;
+        window.location.href = "captacion_clientes.php?sAccion=delete&idcaptacion=" + idcaptacion;
     }
 }
 </script>
 
 <div class="content-wrapper">
-  <section class="content-header">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <div class="col-sm-6">
-          <h1>Lista de Captaciones de Clientes</h1>
-        </div>
-      </div>
-    </div>
-  </section>
+    <section class="content-header">
+        <h1>Lista de Captación de Clientes</h1>
+    </section>
 
-  <section class="content">
-    <div class="card">
-      <div class="card-header">
-        <form action="captacion_clientes.php" method="post">
-          <div class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <label>Tipo de Cliente:</label>
-                <select class="form-control" name="tipo_cliente">
-                  <option value="">TODOS</option>
-                  <option value="individual" <?= $tipo_cliente == "individual" ? "selected" : "" ?>>Individual</option>
-                  <option value="corporativo" <?= $tipo_cliente == "corporativo" ? "selected" : "" ?>>Corporativo</option>
-                  <option value="vip" <?= $tipo_cliente == "vip" ? "selected" : "" ?>>VIP</option>
-                  <option value="familiar" <?= $tipo_cliente == "familiar" ? "selected" : "" ?>>Familiar</option>
-                  <option value="estudiantil" <?= $tipo_cliente == "estudiantil" ? "selected" : "" ?>>Estudiantil</option>
-                </select>
-              </div>
+    <section class="content">
+        <div class="card">
+            <div class="card-header">
+                <form action="captacion_clientes.php" method="post">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Tipo de Cliente:</label>
+                            <select class="form-control" name="tipo_cliente">
+                                <option value="">TODOS</option>
+                                <option value="Individual" <?= $tipo_cliente == "Individual" ? "selected" : "" ?>>Individual</option>
+                                <option value="Corporativo" <?= $tipo_cliente == "Corporativo" ? "selected" : "" ?>>Corporativo</option>
+                                <option value="VIP" <?= $tipo_cliente == "VIP" ? "selected" : "" ?>>VIP</option>
+                                <option value="Familiar" <?= $tipo_cliente == "Familiar" ? "selected" : "" ?>>Familiar</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary">Consultar</button>
+                            <button type="button" class="btn btn-success" onclick="NewCaptacion();">Nueva Captación</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="col-6">
-              <div class="form-group">
-                <button id="submit" class="btn btn-primary">Consultar</button>
-                <button type="button" class="btn btn-success" onclick="NewCaptacion();">Nueva Captación</button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
 
-      <?php
-      $sql = "SELECT idcliente, idcaptacion, tipo_cliente, nombre_cliente, contacto, estado, fecha_captacion 
-              FROM captacion_clientes WHERE idcliente > 0";
-      if ($tipo_cliente != "") $sql .= " AND tipo_cliente = '$tipo_cliente'";
-      $sql .= " ORDER BY nombre_cliente";
-
-      $result = dbQuery($sql);
-      $total_registros = mysqli_num_rows($result);
-      ?>
-
-      <div class="card-body">
-        <table id="listado" class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Nombre del Cliente</th>
-              <th>Tipo de Cliente</th>
-              <th>Contacto</th>
-              <th>Estado</th>
-              <th>Fecha de Captación</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php if ($total_registros > 0) {
-                while ($row = mysqli_fetch_array($result)) {
-                    $estado = $row["estado"] == "A" ? "Activo" : "Inactivo";
-                    $tipo_cliente = ucfirst($row["tipo_cliente"]);
+            <?php
+            $sql = "SELECT * FROM captacion_clientes WHERE idcaptacion > 0";
+            if ($tipo_cliente != "") {
+                $sql .= " AND tipo_cliente = ?";
+                $stmt = dbQuery($sql, [$tipo_cliente]);
+            } else {
+                $stmt = dbQuery($sql);
+            }
+            $total_registros = $stmt->num_rows;
             ?>
-              <tr>
-                <td><?= $row["nombre_cliente"]; ?></td>
-                <td><?= $tipo_cliente; ?></td>
-                <td><?= $row["contacto"]; ?></td>
-                <td><?= $estado; ?></td>
-                <td><?= $row["fecha_captacion"]; ?></td>
-                <td>
-                  <button class="btn btn-info" onclick="EditCaptacion(<?= $row['idcliente']; ?>);">Editar</button>
-                  <button class="btn btn-danger" onclick="DeleteCaptacion(<?= $row['idcliente']; ?>);">Eliminar</button>
-                </td>
-              </tr>
-            <?php } } else { ?>
-              <tr><td colspan="6">No existen registros</td></tr>
-            <?php } ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+
+            <div class="card-body">
+                <table id="listado" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Cliente</th>
+                            <th>Tipo de Cliente</th>
+                            <th>Contacto</th>
+                            <th>Estado</th>
+                            <th>Fecha de Captación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($total_registros > 0) {
+                            while ($row = $stmt->fetch_assoc()) {
+                                $estado = $row["estado"] == "A" ? "Activo" : "Inactivo"; ?>
+                                <tr>
+                                    <td><?= $row["nombre_cliente"] ?></td>
+                                    <td><?= $row["tipo_cliente"] ?></td>
+                                    <td><?= $row["contacto"] ?></td>
+                                    <td><?= $estado ?></td>
+                                    <td><?= $row["fecha_captacion"] ?></td>
+                                    <td>
+                                        <button class="btn btn-info" onclick="EditCaptacion(<?= $row['idcaptacion'] ?>);">Editar</button>
+                                        <button class="btn btn-danger" onclick="DeleteCaptacion(<?= $row['idcaptacion'] ?>);">Eliminar</button>
+                                    </td>
+                                </tr>
+                            <?php }
+                        } else { ?>
+                            <tr><td colspan="6">No existen registros</td></tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 </div>
 
-<?php include("footer.php"); ?>
+<?php include_once("footer.php"); ?>
 
 <script>
   $(function () {

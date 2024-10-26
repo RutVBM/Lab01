@@ -67,7 +67,7 @@
                         </li>
                         <li class="nav-item">
                             <a href="gestion_sanciones.php" class="nav-link" style="color: white;">
-                                <i class="far fa-circle nav-icon"></i><p>Sanciones</p>
+                                <i class="far fa-circle nav-icon"></i><p>Gestión de sanciones</p>
                             </a>
                         </li>
                         <li class="nav-item">

@@ -1,83 +1,71 @@
 <?php
-include("header.php");
+ob_start(); // Inicia el buffer de salida para evitar errores de header
+include("header.php"); 
+include_once("conexion/database.php"); 
 
-$sAccion = "";
-$sTitulo = "";
+// Inicialización de variables
+$sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
+$sTitulo = $sAccion == "new" ? "Registrar un nuevo reclamo" : "Modificar Reclamo";
+$idreclamo = $_POST["idreclamo"] ?? "";
+$idcliente = $descripcion = $estado = "";
 
-if (isset($_GET["sAccion"])) {
-    $sAccion = $_GET["sAccion"]; // new / edit
-} elseif (isset($_POST["sAccion"])) {
-    $sAccion = $_POST["sAccion"]; // insert / update
-}
+// Verificar la acción y cargar datos si es necesario
+if ($sAccion == "edit" && isset($_GET["idreclamo"])) {
+    $idreclamo = $_GET["idreclamo"];
 
-if ($sAccion == "new") {
-    $sTitulo = "Registrar un nuevo reclamo";
-    $sCambioAccion = "insert";
-    $idcliente = "";
-    $nombre_cliente = "";
-    $descripcion = "";
-    $estado = "pendiente"; // Por defecto pendiente
-    $fecha_reclamo = date("Y-m-d"); // Fecha actual
-} elseif ($sAccion == "edit") {
-    $sTitulo = "Modificar reclamo";
-    $sCambioAccion = "update";
-    if (isset($_GET["idreclamo"])) $idreclamo = $_GET["idreclamo"];
-    
-    // Obtener datos del reclamo a editar
-    $sql = "SELECT * FROM atencion_reclamos WHERE idreclamo = $idreclamo";
-    $result = dbQuery($sql);
-    if ($row = mysqli_fetch_array($result)) {
+    // Cargar datos del reclamo a editar
+    $stmt = dbQuery("SELECT * FROM atencion_reclamos WHERE idreclamo = ?", [$idreclamo]);
+    if ($stmt && $row = $stmt->fetch_assoc()) {
         $idcliente = $row["idcliente"];
-        $nombre_cliente = $row["nombre_cliente"];
         $descripcion = $row["descripcion"];
         $estado = $row["estado"];
-        $fecha_reclamo = $row["fecha_reclamo"];
+    } else {
+        echo "Error: Reclamo no encontrado.";
+        exit();
     }
-} elseif ($sAccion == "insert") {
-    $idcliente = $_POST["idcliente"];
-    $nombre_cliente = $_POST["nombre_cliente"];
-    $descripcion = $_POST["descripcion"];
-    $estado = $_POST["estado"];
-    $fecha_reclamo = date("Y-m-d");
+}
 
-    // Insertar un nuevo reclamo
-    $sql = "INSERT INTO atencion_reclamos (idcliente, nombre_cliente, descripcion, estado, fecha_reclamo) 
-            VALUES ('$idcliente', '$nombre_cliente', '$descripcion', '$estado', '$fecha_reclamo')";
-    dbQuery($sql);
-    
-    // Redirigir después de insertar
-    header("Location: atencion_reclamos.php");
-} elseif ($sAccion == "update") {
-    $idreclamo = $_POST["idreclamo"];
+// Procesar inserción o actualización de datos
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $idcliente = $_POST["idcliente"];
-    $nombre_cliente = $_POST["nombre_cliente"];
     $descripcion = $_POST["descripcion"];
     $estado = $_POST["estado"];
-    
-    // Actualizar reclamo existente
-    $sql = "UPDATE atencion_reclamos SET idcliente = '$idcliente', nombre_cliente = '$nombre_cliente', 
-            descripcion = '$descripcion', estado = '$estado' WHERE idreclamo = $idreclamo";
-    dbQuery($sql);
-    
-    // Redirigir después de actualizar
-    header("Location: atencion_reclamos.php");
+
+    if ($sAccion == "insert") {
+        // Validar si el cliente existe
+        $cliente = dbQuery("SELECT * FROM cliente WHERE idcliente = ?", [$idcliente]);
+        if ($cliente->num_rows == 0) {
+            die("Error: El cliente seleccionado no existe.");
+        }
+
+        // Insertar nuevo reclamo
+        $sql = "INSERT INTO atencion_reclamos (idcliente, descripcion, estado, fecha_reclamo) 
+                VALUES (?, ?, ?, NOW())";
+        dbQuery($sql, [$idcliente, $descripcion, $estado]);
+
+        header("Location: atencion_reclamos.php");
+        exit(); // Detener ejecución después de redirigir
+    } elseif ($sAccion == "update") {
+        $idreclamo = $_POST["idreclamo"];
+
+        // Actualizar reclamo existente
+        $sql = "UPDATE atencion_reclamos 
+                SET idcliente = ?, descripcion = ?, estado = ? 
+                WHERE idreclamo = ?";
+        dbQuery($sql, [$idcliente, $descripcion, $estado, $idreclamo]);
+
+        header("Location: atencion_reclamos.php");
+        exit(); // Detener ejecución después de redirigir
+    }
 }
 ?>
 
-<?php
-include("sidebar.php");
-?>
+<?php include("sidebar.php"); ?>
 
-<!-- Content Wrapper. Contains page content -->
+<!-- Contenido Principal -->
 <div class="content-wrapper">
     <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1><?php echo $sTitulo; ?></h1>
-                </div>
-            </div>
-        </div>
+        <h1><?= $sTitulo ?></h1>
     </section>
 
     <section class="content">
@@ -87,30 +75,33 @@ include("sidebar.php");
             </div>
 
             <div class="card-body">
-                <form name="frmDatos" action="atencion_reclamos_detalle.php" method="post">
-                    <input type="text" name="sAccion" value="<?php echo $sCambioAccion; ?>" hidden>
-                    <input type="text" name="idreclamo" value="<?php echo $idreclamo; ?>" hidden>
+                <form action="atencion_reclamos_detalle.php" method="post">
+                    <input type="hidden" name="sAccion" value="<?= $sAccion == 'new' ? 'insert' : 'update' ?>">
+                    <input type="hidden" name="idreclamo" value="<?= $idreclamo ?>">
 
                     <div class="form-group">
-                        <label for="idcliente">ID Cliente (*):</label>
-                        <input type="text" name="idcliente" id="idcliente" class="form-control" value="<?php echo $idcliente; ?>" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="nombre_cliente">Nombre del Cliente (*):</label>
-                        <input type="text" name="nombre_cliente" id="nombre_cliente" class="form-control" value="<?php echo $nombre_cliente; ?>" required />
+                        <label for="idcliente">Seleccionar Cliente (*):</label>
+                        <select name="idcliente" id="idcliente" class="form-control" required>
+                            <?php
+                            $clientes = dbQuery("SELECT idcliente, nombre FROM cliente");
+                            while ($cliente = $clientes->fetch_assoc()) {
+                                $selected = ($cliente['idcliente'] == $idcliente) ? 'selected' : '';
+                                echo "<option value='{$cliente['idcliente']}' $selected>{$cliente['nombre']}</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="descripcion">Descripción del Reclamo (*):</label>
-                        <textarea name="descripcion" id="descripcion" class="form-control" required><?php echo $descripcion; ?></textarea>
+                        <textarea name="descripcion" id="descripcion" class="form-control" required><?= $descripcion ?></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="estado">Estado:</label>
                         <select name="estado" id="estado" class="form-control">
-                            <option value="pendiente" <?php if($estado == 'pendiente') echo 'selected'; ?>>Pendiente</option>
-                            <option value="resuelto" <?php if($estado == 'resuelto') echo 'selected'; ?>>Resuelto</option>
+                            <option value="pendiente" <?= $estado == 'pendiente' ? 'selected' : '' ?>>Pendiente</option>
+                            <option value="resuelto" <?= $estado == 'resuelto' ? 'selected' : '' ?>>Resuelto</option>
                         </select>
                     </div>
 
@@ -121,6 +112,5 @@ include("sidebar.php");
     </section>
 </div>
 
-<?php
-include("footer.php");
-?>
+<?php include("footer.php"); ?>
+<?php ob_end_flush(); // Enviar el contenido del buffer ?>

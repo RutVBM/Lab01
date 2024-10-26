@@ -1,117 +1,88 @@
 <?php
-ob_start(); // Inicia el buffer de salida
-
-include("header.php");
+ob_start();
+include_once("header.php");
+include_once("conexion/database.php");
 
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
-$sTitulo = $sAccion == "new" ? "Registrar una nueva captación de cliente" : "Modificar los datos de captación de cliente";
+$sTitulo = $sAccion == "new" ? "Registrar Captación de Cliente" : "Editar Captación";
 $sCambioAccion = $sAccion == "new" ? "insert" : "update";
 
-if ($sAccion == "edit" && isset($_GET["idcliente"])) {
-    $idcliente = $_GET["idcliente"];
-
-    // Consulta preparada para obtener los datos del cliente
-    $sql = "SELECT * FROM captacion_clientes WHERE idcliente = ?";
-    $result = dbQuery($sql, [$idcliente]);
-    $row = $result->fetch_assoc();
-
+if ($sAccion == "edit" && isset($_GET["idcaptacion"])) {
+    $idcaptacion = $_GET["idcaptacion"];
+    $stmt = dbQuery("SELECT * FROM captacion_clientes WHERE idcaptacion = ?", [$idcaptacion]);
+    $row = $stmt->fetch_assoc();
     $tipo_cliente = $row["tipo_cliente"];
     $nombre_cliente = $row["nombre_cliente"];
     $contacto = $row["contacto"];
     $estado = $row["estado"];
 } else {
-    $idcliente = $tipo_cliente = $nombre_cliente = $contacto = "";
+    $idcaptacion = $tipo_cliente = $nombre_cliente = $contacto = "";
     $estado = "A";
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $idcliente = $_POST["idcliente"];
+    $idcaptacion = $_POST["idcaptacion"];
     $tipo_cliente = $_POST["tipo_cliente"];
     $nombre_cliente = $_POST["nombre_cliente"];
     $contacto = $_POST["contacto"];
     $estado = $_POST["estado"];
 
     if ($sCambioAccion == "insert") {
-        // Consulta para insertar nueva captación
-        $sql = "INSERT INTO captacion_clientes (idcliente, tipo_cliente, nombre_cliente, contacto, estado, fecha_captacion) 
-                VALUES (?, ?, ?, ?, ?, CURDATE())";
-        dbQuery($sql, [$idcliente, $tipo_cliente, $nombre_cliente, $contacto, $estado]);
+        $sql = "INSERT INTO captacion_clientes (tipo_cliente, nombre_cliente, contacto, estado, fecha_captacion) 
+                VALUES (?, ?, ?, ?, NOW())";
+        dbQuery($sql, [$tipo_cliente, $nombre_cliente, $contacto, $estado]);
     } else {
-        // Consulta para actualizar una captación existente
         $sql = "UPDATE captacion_clientes 
                 SET tipo_cliente = ?, nombre_cliente = ?, contacto = ?, estado = ? 
-                WHERE idcliente = ?";
-        dbQuery($sql, [$tipo_cliente, $nombre_cliente, $contacto, $estado, $idcliente]);
+                WHERE idcaptacion = ?";
+        dbQuery($sql, [$tipo_cliente, $nombre_cliente, $contacto, $estado, $idcaptacion]);
     }
 
     header("Location: captacion_clientes.php?mensaje=success");
     exit();
 }
-
-include("sidebar.php");
 ?>
 
-
-
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1><?php echo $sTitulo; ?></h1>
-                </div>
-            </div>
-        </div>
+        <h1><?= $sTitulo ?></h1>
     </section>
 
     <section class="content">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><?php echo $sAccion == "new" ? "Ingrese los datos del nuevo cliente" : "Modifique los datos del cliente"; ?></h3>
+        <form method="post">
+            <input type="hidden" name="idcaptacion" value="<?= $idcaptacion ?>">
+
+            <div class="form-group">
+                <label>Tipo de Cliente:</label>
+                <select name="tipo_cliente" class="form-control" required>
+                    <option value="Individual" <?= $tipo_cliente == 'Individual' ? 'selected' : '' ?>>Individual</option>
+                    <option value="Corporativo" <?= $tipo_cliente == 'Corporativo' ? 'selected' : '' ?>>Corporativo</option>
+                    <option value="VIP" <?= $tipo_cliente == 'VIP' ? 'selected' : '' ?>>VIP</option>
+                    <option value="Familiar" <?= $tipo_cliente == 'Familiar' ? 'selected' : '' ?>>Familiar</option>
+                </select>
             </div>
 
-            <div class="card-body">
-                <form name="frmDatos" action="captacion_clientes_detalle.php" method="post">
-                    <input type="hidden" name="sAccion" value="<?php echo $sCambioAccion; ?>">
-                    <input type="hidden" name="idcliente" value="<?php echo $idcliente; ?>">
-
-                    <div class="form-group">
-                        <label for="tipo_cliente">Tipo de Cliente (*):</label>
-                        <select name="tipo_cliente" id="tipo_cliente" class="form-control" required>
-                            <option value="individual" <?php if ($tipo_cliente == 'individual') echo 'selected'; ?>>Individual</option>
-                            <option value="corporativo" <?php if ($tipo_cliente == 'corporativo') echo 'selected'; ?>>Corporativo</option>
-                            <option value="vip" <?php if ($tipo_cliente == 'vip') echo 'selected'; ?>>VIP</option>
-                            <option value="familiar" <?php if ($tipo_cliente == 'familiar') echo 'selected'; ?>>Familiar</option>
-                            <option value="estudiantil" <?php if ($tipo_cliente == 'estudiantil') echo 'selected'; ?>>Estudiantil</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="nombre_cliente">Nombre del Cliente (*):</label>
-                        <input type="text" name="nombre_cliente" id="nombre_cliente" class="form-control" 
-                               value="<?php echo $nombre_cliente; ?>" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contacto">Contacto (*):</label>
-                        <input type="text" name="contacto" id="contacto" class="form-control" 
-                               value="<?php echo $contacto; ?>" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="estado">Estado:</label>
-                        <select name="estado" id="estado" class="form-control">
-                            <option value="A" <?php if ($estado == 'A') echo 'selected'; ?>>Activo</option>
-                            <option value="I" <?php if ($estado == 'I') echo 'selected'; ?>>Inactivo</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Guardar</button>
-                </form>
+            <div class="form-group">
+                <label>Nombre del Cliente:</label>
+                <input type="text" name="nombre_cliente" class="form-control" value="<?= $nombre_cliente ?>" required>
             </div>
-        </div>
+
+            <div class="form-group">
+                <label>Contacto:</label>
+                <input type="text" name="contacto" class="form-control" value="<?= $contacto ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label>Estado:</label>
+                <select name="estado" class="form-control">
+                    <option value="A" <?= $estado == 'A' ? 'selected' : '' ?>>Activo</option>
+                    <option value="I" <?= $estado == 'I' ? 'selected' : '' ?>>Inactivo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </form>
     </section>
 </div>
 
-<?php include("footer.php"); ?>
+<?php include_once("footer.php"); ?>
