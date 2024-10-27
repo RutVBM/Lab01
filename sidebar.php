@@ -90,11 +90,7 @@
                                 <i class="fas fa-user-friends nav-icon"></i><p>Clientes</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="venta.php" class="nav-link" style="color: white;">
-                                <i class="fas fa-file-invoice-dollar nav-icon"></i><p>Comprobantes de venta</p>
-                            </a>
-                        </li>
+    
                         <li class="nav-item">
                             <a href="reserva_entrenamientos.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-calendar-check nav-icon"></i><p>Reserva de Entrenamientos</p>
