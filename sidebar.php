@@ -102,7 +102,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="historico_sanciones.php" class="nav-link" style="color: white;">
+                            <a href="sancion_cliente.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-history nav-icon"></i><p>Histórico de Sanciones</p>
                             </a>
                         </li>
