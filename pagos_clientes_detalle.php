@@ -22,12 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $metodo_pago = $_POST["metodo_pago"];
 
     if ($sCambioAccion == "insert") {
-        $sql = "INSERT INTO pagos_clientes (tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago) 
+        $sql = "INSERT INTO pago_clientes (tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago) 
                 VALUES ('$tipo_plan', '$nombre_plan', '$duracion', '$precio', '$metodo_pago', CURDATE())";
     } else {
         // Para actualización de pago
         $id_pago = $_POST["id_pago"];
-        $sql = "UPDATE pagos_clientes 
+        $sql = "UPDATE pago_clientes 
                 SET tipo_plan = '$tipo_plan', nombre_plan = '$nombre_plan', duracion = '$duracion', 
                     precio = '$precio', metodo_pago = '$metodo_pago' WHERE id_pago = $id_pago";
     }
