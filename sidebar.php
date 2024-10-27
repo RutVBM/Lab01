@@ -71,7 +71,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="reportes_gestion.php" class="nav-link" style="color: white;">
+                            <a href="reporte_gestion.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-chart-line nav-icon"></i><p>Reportes de gestión</p>
                             </a>
                         </li>
