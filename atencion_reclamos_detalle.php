@@ -6,7 +6,7 @@ include_once("conexion/database.php");
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "edit";
 $sTitulo = "Modificar Reclamo";
 $id_reclamo = $_POST["id_reclamo"] ?? "";
-$id_cliente = $tipo = $detalle = $fecha_reclamo = $estado_reclamo = $fecha_solucion = "";
+$id_cliente = $tipo = $detalle = $fecha_reclamo = $estado_reclamo = $fecha_solucion = $detalle_solucion = "";
 
 // Cargar datos del reclamo a editar si se proporciona un `id_reclamo`
 if (isset($_GET["id_reclamo"])) {
@@ -21,6 +21,7 @@ if (isset($_GET["id_reclamo"])) {
         $fecha_reclamo = $row["fecha_reclamo"];
         $estado_reclamo = $row["estado_reclamo"];
         $fecha_solucion = $row["fecha_solucion"];
+        $detalle_solucion = $row["detalle_solucion"]; // Nuevo campo
     } else {
         echo "Error: Reclamo no encontrado.";
         exit();
@@ -31,13 +32,14 @@ if (isset($_GET["id_reclamo"])) {
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
     $estado_reclamo = $_POST["estado_reclamo"];
     $fecha_solucion = $_POST["fecha_solucion"];
+    $detalle_solucion = $_POST["detalle_solucion"]; // Capturar detalle de solución
     $id_reclamo = $_POST["id_reclamo"];
 
     // Actualizar reclamo existente
     $sql = "UPDATE reclamos 
-            SET estado_reclamo = ?, fecha_solucion = ? 
+            SET estado_reclamo = ?, fecha_solucion = ?, detalle_solucion = ?
             WHERE id_reclamo = ?";
-    dbQuery($sql, [$estado_reclamo, $fecha_solucion, $id_reclamo]);
+    dbQuery($sql, [$estado_reclamo, $fecha_solucion, $detalle_solucion, $id_reclamo]);
 
     header("Location: atencion_reclamos.php?mensaje=success");
     exit();
@@ -92,6 +94,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
                     <div class="form-group">
                         <label for="fecha_solucion">Fecha de Solución:</label>
                         <input type="date" name="fecha_solucion" class="form-control" value="<?= $fecha_solucion ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="detalle_solucion">Detalle de la Solución:</label>
+                        <textarea name="detalle_solucion" class="form-control" rows="3"><?= $detalle_solucion ?></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-success">Guardar</button>

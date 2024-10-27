@@ -29,7 +29,7 @@ function EditReclamo(id_reclamo) {
             <div class="card-body">
                 <?php
                 // Consulta SQL para obtener todos los campos de la tabla "reclamos"
-                $sql = "SELECT r.id_cliente, r.id_reclamo, r.tipo, r.detalle, r.fecha_reclamo, r.estado_reclamo, r.fecha_solucion
+                $sql = "SELECT r.id_cliente, r.id_reclamo, r.tipo, r.detalle, r.fecha_reclamo, r.estado_reclamo, r.fecha_solucion, r.detalle_solucion
                         FROM reclamos r
                         WHERE r.id_reclamo > 0";
 
@@ -53,6 +53,7 @@ function EditReclamo(id_reclamo) {
                             <th>Fecha de Reclamo</th>
                             <th>Estado</th>
                             <th>Fecha de Solución</th>
+                            <th>Detalle de Solución</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -69,6 +70,7 @@ function EditReclamo(id_reclamo) {
                                     <td><?= $row["fecha_reclamo"] ?></td>
                                     <td><?= $row["estado_reclamo"] == "pendiente" ? "Pendiente" : "Resuelto" ?></td>
                                     <td><?= $row["fecha_solucion"] ?></td>
+                                    <td><?= $row["detalle_solucion"] ?></td>
                                     <td>
                                         <button type="button" class="btn btn-info" onclick="EditReclamo(<?= $row['id_reclamo'] ?>);">Atender</button>
                                     </td>
@@ -76,7 +78,7 @@ function EditReclamo(id_reclamo) {
                                 <?php
                             }
                         } else {
-                            echo "<tr><td colspan='8'>No existen reclamos registrados</td></tr>";
+                            echo "<tr><td colspan='9'>No existen reclamos registrados</td></tr>";
                         }
                         ?>
                     </tbody>
