@@ -97,7 +97,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="pagos_planes.php" class="nav-link" style="color: white;">
+                            <a href="pagos_clientes.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-credit-card nav-icon"></i><p>Pagos y Planes</p>
                             </a>
                         </li>
