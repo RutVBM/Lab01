@@ -1,15 +1,18 @@
 <?php
 include_once("conexion/database.php");
 
-$idplan = $_GET['idplan'] ?? null;
-
-if ($idplan) {
+if (isset($_GET['idplan'])) {
+    $idplan = $_GET['idplan'];
     $sql = "SELECT duracion, precio FROM planes_entrenamiento WHERE idplan = ?";
     $stmt = dbQuery($sql, [$idplan]);
-    $plan = $stmt->fetch_assoc();
+    $row = $stmt->fetch_assoc();
 
-    echo json_encode($plan);
+    // Devolver la duración y precio en formato JSON
+    echo json_encode([
+        'duracion' => $row['duracion'],
+        'precio' => $row['precio']
+    ]);
 } else {
-    echo json_encode(["duracion" => "", "precio" => ""]);
+    echo json_encode(['error' => 'No se proporcionó idplan']);
 }
 ?>
