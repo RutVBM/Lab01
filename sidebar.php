@@ -142,13 +142,13 @@
                     </a>
                     <ul class="nav nav-treeview" style="margin-left: 15px;">
                         <li class="nav-item">
-                            <a href="logistica1.php" class="nav-link" style="color: white;">
-                                <i class="fas fa-truck-loading nav-icon"></i><p>Logística 1</p>
+                            <a href="compra_insumos.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-truck-loading nav-icon"></i><p>Compras de insumos</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="logistica2.php" class="nav-link" style="color: white;">
-                                <i class="fas fa-warehouse nav-icon"></i><p>Logística 2</p>
+                            <a href="inventario.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-warehouse nav-icon"></i><p>Inventario</p>
                             </a>
                         </li>
                     </ul>
