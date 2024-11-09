@@ -73,16 +73,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <!-- Campo oculto para ID Cliente -->
                     <input type="hidden" name="id_cliente" value="<?= $id_cliente ?>">
 
+                    <!-- Campo para Tipo de Solicitud -->
                     <div class="form-group">
-                        <label for="tipo">Tipo de Reclamo:</label>
+                        <label for="tipo">Tipo de solicitud:</label>
                         <select name="tipo" class="form-control" required>
                             <option value="Consulta" <?= $tipo == 'Consulta' ? 'selected' : '' ?>>Consulta</option>
                             <option value="Reclamo" <?= $tipo == 'Reclamo' ? 'selected' : '' ?>>Reclamo</option>
                         </select>
                     </div>
 
+                    <!-- Campo para Detalle -->
                     <div class="form-group">
-                        <label for="detalle">Descripción del Reclamo:</label>
+                        <label for="detalle">Detalle:</label>
                         <textarea name="detalle" class="form-control" required><?= $detalle ?></textarea>
                     </div>
 
@@ -95,3 +97,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <?php include("footer.php"); ?>
 <?php ob_end_flush(); ?>
+
