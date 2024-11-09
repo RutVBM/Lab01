@@ -1,3 +1,7 @@
+<?php 
+session_start(); 
+?>
+
 <!-- Main Sidebar Container --> 
 <aside class="main-sidebar elevation-4" style="background-color: orange;">
     <!-- Brand Logo -->
@@ -8,9 +12,22 @@
 
     <!-- Sidebar -->
     <div class="sidebar" style="background-color: orange;">
+
+        <!-- Mostrar nombre del usuario logueado -->
+        <?php if(isset($_SESSION['USUARIO'])): ?>
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="info">
+                    <a href="#" class="d-block" style="color: white; font-weight: bold;">
+                        <?php echo "Bienvenido, " . $_SESSION['USUARIO']; ?>
+                    </a>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Formulario de búsqueda -->
         <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search" style="background-color: #f8f9fa; color: black;">
+                <input class="form-control form-control-sidebar" type="search" placeholder="Buscar" aria-label="Buscar" style="background-color: #f8f9fa; color: black;">
                 <div class="input-group-append">
                     <button class="btn btn-sidebar" style="background-color: white; color: orange;">
                         <i class="fas fa-search fa-fw"></i>
