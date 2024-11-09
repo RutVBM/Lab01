@@ -1,5 +1,6 @@
 <?php
 ob_start();
+session_start(); // Iniciar sesión para acceder a las variables de sesión
 include("header.php");
 include_once("conexion/database.php");
 
@@ -9,7 +10,8 @@ date_default_timezone_set('America/Lima');
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
 $sTitulo = $sAccion == "new" ? "Registrar un nuevo reclamo o consulta" : "Modificar Reclamo";
 $id_reclamo = $_POST["id_reclamo"] ?? "";
-$id_cliente = $tipo = $detalle = "";
+$id_cliente = $sAccion == "new" ? $_SESSION["CORREO"] : ""; // Usar el correo del usuario logueado si es una nueva entrada
+$tipo = $detalle = "";
 
 // Verificar la acción y cargar datos si es necesario
 if ($sAccion == "edit" && isset($_GET["id_reclamo"])) {
@@ -68,11 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <form action="reclamo_cliente_detalle.php" method="post">
                     <input type="hidden" name="sAccion" value="<?= $sAccion == 'new' ? 'insert' : 'update' ?>">
                     <input type="hidden" name="id_reclamo" value="<?= $id_reclamo ?>">
-
-                    <div class="form-group">
-                        <label for="id_cliente">ID Cliente:</label>
-                        <input type="text" name="id_cliente" class="form-control" value="<?= $id_cliente ?>" required>
-                    </div>
+                    <!-- Campo oculto para ID Cliente -->
+                    <input type="hidden" name="id_cliente" value="<?= $id_cliente ?>">
 
                     <div class="form-group">
                         <label for="tipo">Tipo de Reclamo:</label>

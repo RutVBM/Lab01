@@ -1,5 +1,8 @@
 <?php
-session_start();
+// Inicia la sesión solo si aún no ha sido iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include("conexion/database.php");
 ?>
 

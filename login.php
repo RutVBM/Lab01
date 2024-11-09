@@ -1,31 +1,29 @@
 <?php
 session_start();
-include ("conexion/database.php");
+include("conexion/database.php");
 
-if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
-  //exit($_POST["correo"]."/".$_POST["clave"]);
-  $correo = $_POST["correo"];
-  $clave = $_POST["clave"];
-  $sql = "Select * From usuario Where correo='$correo' and clave = '$clave' and estado='A'";
-  //echo("<br />".$sql);
-  //exit(0);
-  $result = dbQuery($sql);
-  $num_rows = mysqli_num_rows($result);
-  if ($num_rows > 0 ) 
-  { $row = mysqli_fetch_array($result, MYSQLI_BOTH);   
-    $idusuario = $row["idusuario"];
-    $_SESSION["IDUSUARIO"] = $idusuario; 
-    $_SESSION["USUARIO"] = $row["nombre"]." ".$row["apellido"];	
-    echo "<script language='JavaScript'>";
-    echo "window.location.href='blank.php';";
-    echo "</script>";
+if (isset($_POST["correo"]) && isset($_POST["clave"])) {
+    $correo = $_POST["correo"];
+    $clave = $_POST["clave"];
+    $sql = "SELECT * FROM usuario WHERE correo = '$correo' AND clave = '$clave' AND estado = 'A'";
+    $result = dbQuery($sql);
+    $num_rows = mysqli_num_rows($result);
 
-  }
-  else
-  { 	echo '<script language="JavaScript">';
-      echo 'alert("La información registrada no es valida");';
-      echo '</script>';
-  }
+    if ($num_rows > 0) {
+        $row = mysqli_fetch_array($result, MYSQLI_BOTH);   
+        $idusuario = $row["idusuario"];
+        $_SESSION["IDUSUARIO"] = $idusuario; 
+        $_SESSION["USUARIO"] = $row["nombre"] . " " . $row["apellido"]; 
+        $_SESSION["CORREO"] = $row["correo"]; // Guardar el correo en la sesión
+
+        echo "<script language='JavaScript'>";
+        echo "window.location.href='blank.php';";
+        echo "</script>";
+    } else {
+        echo '<script language="JavaScript">';
+        echo 'alert("La información registrada no es válida");';
+        echo '</script>';
+    }
 }
 ?>
 
@@ -36,8 +34,6 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Fitness.Center | Iniciar Sesión</title>
 
-    
-
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -47,14 +43,12 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
   <!-- Theme style -->
   <link rel="stylesheet" href="../Lab01/dist/css/adminlte.min.css">
 
-  
   <style>
      body {
         background-image: url('../Lab01/imagen.jpg');
         background-size: cover;
         background-position: center;
      }
-
      
      .login-logo {
         color: #28a745;
@@ -79,7 +73,6 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
         color: #FFA500; 
      }
 
-     
      .login-box {
         background-color: rgba(17, 17, 17, 0.8); 
         color: white; 
@@ -93,7 +86,6 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
         transform: translate(-50%,-50%);
      }
 
-    
      .login-card-body {
         background-color: rgba(255, 255, 255, 0.9); 
         border-radius: 10px;
@@ -103,13 +95,11 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
         margin: 0 auto;
      }
 
-     
      .btn-login {
         background-color: #FFA500;
         color: white;
      }
 
-   
      .btn-facebook {
         background-color: #3b5998;
         color: white;
@@ -119,7 +109,6 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
         background-color: #dd1505;
         color: white;
      }
-
   </style>
 </head>
 
@@ -139,8 +128,7 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
       <p class="login-box-msg">Regístrate o inicia sesión</p>
 
       <form action="login.php" method="post">
-
-        <!--correo electrónico -->
+        <!-- correo electrónico -->
         <div class="input-group mb-3">
           <input type="email" class="form-control" placeholder="Correo Electrónico" name="correo">
           <div class="input-group-append">
@@ -150,7 +138,7 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
           </div>
         </div>
 
-        <!--contraseña -->
+        <!-- contraseña -->
         <div class="input-group mb-3">
           <input type="password" class="form-control" placeholder="Contraseña" name="clave">
           <div class="input-group-append">
@@ -181,7 +169,6 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
             </div>
           </div>
         </div>
-
       </form>
 
       <div class="social-auth-links text-center mb-3">
@@ -194,7 +181,6 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
         </a>
       </div>
       
-
       <p class="mb-1">
         <a href="forgot-password.html">Olvidé mi contraseña</a>
       </p>
@@ -202,10 +188,8 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
         <a href="register.html" class="text-center">Registrar nueva membresía</a>
       </p>
     </div>
-    
   </div>
 </div>
-
 
 <!-- jQuery -->
 <script src="../Lab01/plugins/jquery/jquery.min.js"></script>
@@ -215,3 +199,4 @@ if(isset($_POST["correo"]) && isset($_POST["clave"]) ){
 <script src="../Lab01/dist/js/adminlte.min.js"></script>
 </body>
 </html>
+
