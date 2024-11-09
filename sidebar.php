@@ -1,5 +1,7 @@
 <?php 
-session_start(); 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 ?>
 
 <!-- Main Sidebar Container --> 
@@ -43,7 +45,7 @@ session_start();
                 <!-- Administración Usuarios -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" style="color: white;">
-                        <img src="../Lab01/admin-users.png" class="nav-icon" style="width: 20px; height: 20px;"> <!-- Custom icon -->
+                        <img src="../Lab01/admin-users.png" class="nav-icon" style="width: 20px; height: 20px;">
                         <p>Administración Usuarios<i class="right fas fa-angle-left"></i></p>
                     </a>
                     <ul class="nav nav-treeview" style="margin-left: 15px;">
@@ -63,7 +65,7 @@ session_start();
                 <!-- Comercial -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" style="color: white;">
-                        <img src="../Lab01/commercial.png" class="nav-icon" style="width: 20px; height: 20px;"> <!-- Custom icon -->
+                        <img src="../Lab01/commercial.png" class="nav-icon" style="width: 20px; height: 20px;">
                         <p>Comercial<i class="fas fa-angle-left right"></i></p>
                     </a>
                     <ul class="nav nav-treeview" style="margin-left: 15px;">
@@ -98,7 +100,7 @@ session_start();
                 <!-- Clientes -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" style="color: white;">
-                        <img src="../Lab01/clients.png" class="nav-icon" style="width: 20px; height: 20px;"> <!-- Custom icon -->
+                        <img src="../Lab01/clients.png" class="nav-icon" style="width: 20px; height: 20px;">
                         <p>Clientes<i class="fas fa-angle-left right"></i></p>
                     </a>
                     <ul class="nav nav-treeview" style="margin-left: 15px;">
@@ -134,7 +136,7 @@ session_start();
                 <!-- Operaciones -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" style="color: white;">
-                        <img src="../Lab01/operations.png" class="nav-icon" style="width: 20px; height: 20px;"> <!-- Custom icon -->
+                        <img src="../Lab01/operations.png" class="nav-icon" style="width: 20px; height: 20px;">
                         <p>Operaciones<i class="fas fa-angle-left right"></i></p>
                     </a>
                     <ul class="nav nav-treeview" style="margin-left: 15px;">
@@ -154,7 +156,7 @@ session_start();
                 <!-- Logística -->
                 <li class="nav-item">
                     <a href="#" class="nav-link" style="color: white;">
-                        <img src="../Lab01/logistics.png" class="nav-icon" style="width: 20px; height: 20px;"> <!-- Custom icon -->
+                        <img src="../Lab01/logistics.png" class="nav-icon" style="width: 20px; height: 20px;">
                         <p>Logística<i class="fas fa-angle-left right"></i></p>
                     </a>
                     <ul class="nav nav-treeview" style="margin-left: 15px;">
