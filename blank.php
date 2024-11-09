@@ -9,7 +9,8 @@
     <section class="hero" style="padding: 150px 0; background-color: rgba(0, 0, 0, 0.7); text-align: center;">
         <h1 style="color: #FFA500; font-size: 50px;">Fitness Center</h1>
         <p style="font-size: 24px;">"La distancia entre los sueños y la realidad es la disciplina"</p>
-        <a href="#services" class="btn" style="background-color: #FFA500; color: white; padding: 10px 20px; border-radius: 5px;">Ver Planes</a>
+        <a href="#services
+        " class="btn" style="background-color: #FFA500; color: white; padding: 10px 20px; border-radius: 5px;">Ver Planes</a>
     </section>
 
     <!-- Sección de Servicios -->
