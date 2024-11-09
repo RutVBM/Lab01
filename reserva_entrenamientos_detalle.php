@@ -1,4 +1,5 @@
 <?php
+session_start(); // Iniciar sesión para acceder a las variables de sesión
 include("header.php");
 
 $sAccion = "";
@@ -19,7 +20,7 @@ if ($sAccion == "new") {
     $sCambioAccion = "insert";
     // Valores por defecto
     $idreserva = "";
-    $nombre_cliente = "";
+    $idcliente = $_SESSION["CORREO"]; // Usar el correo del usuario logueado como ID del cliente
     $tipo_entrenamiento = "";
     $lugar_entrenamiento = "";
     $fecha_reserva = "";
@@ -39,7 +40,7 @@ elseif ($sAccion == "edit") {
         $sql = "SELECT * FROM reserva_entrenamientos WHERE idreserva = $idreserva";
         $result = dbQuery($sql);
         if ($row = mysqli_fetch_array($result)) {
-            $nombre_cliente = $row["nombre_cliente"];
+            $idcliente = $row["idcliente"];
             $tipo_entrenamiento = $row["tipo_entrenamiento"];
             $lugar_entrenamiento = $row["lugar_entrenamiento"];
             $fecha_reserva = $row["fecha_reserva"];
@@ -50,15 +51,15 @@ elseif ($sAccion == "edit") {
 
 // Acción 3: Insertar una nueva reserva en la base de datos
 elseif ($sAccion == "insert") {
-    $nombre_cliente = $_POST["nombre_cliente"];
+    $idcliente = $_POST["idcliente"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
     $lugar_entrenamiento = $_POST["lugar_entrenamiento"];
     $fecha_reserva = $_POST["fecha_reserva"];
     $num_participantes = $_POST["num_participantes"];
     
     // SQL para insertar una nueva reserva
-    $sql = "INSERT INTO reserva_entrenamientos (nombre_cliente, tipo_entrenamiento, lugar_entrenamiento, fecha_reserva, num_participantes) 
-            VALUES ('$nombre_cliente', '$tipo_entrenamiento', '$lugar_entrenamiento', '$fecha_reserva', '$num_participantes')";
+    $sql = "INSERT INTO reserva_entrenamientos (idcliente, tipo_entrenamiento, lugar_entrenamiento, fecha_reserva, num_participantes) 
+            VALUES ('$idcliente', '$tipo_entrenamiento', '$lugar_entrenamiento', '$fecha_reserva', '$num_participantes')";
     dbQuery($sql);
     
     // Redirigir después de insertar
@@ -73,14 +74,14 @@ elseif ($sAccion == "insert") {
 // Acción 4: Actualizar datos de una reserva existente
 elseif ($sAccion == "update") {
     $idreserva = $_POST["idreserva"];
-    $nombre_cliente = $_POST["nombre_cliente"];
+    $idcliente = $_POST["idcliente"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
     $lugar_entrenamiento = $_POST["lugar_entrenamiento"];
     $fecha_reserva = $_POST["fecha_reserva"];
     $num_participantes = $_POST["num_participantes"];
     
     // SQL para actualizar reserva
-    $sql = "UPDATE reserva_entrenamientos SET nombre_cliente = '$nombre_cliente', tipo_entrenamiento = '$tipo_entrenamiento', lugar_entrenamiento = '$lugar_entrenamiento', fecha_reserva = '$fecha_reserva', 
+    $sql = "UPDATE reserva_entrenamientos SET idcliente = '$idcliente', tipo_entrenamiento = '$tipo_entrenamiento', lugar_entrenamiento = '$lugar_entrenamiento', fecha_reserva = '$fecha_reserva', 
             num_participantes = '$num_participantes' WHERE idreserva = $idreserva";
     dbQuery($sql);
     
@@ -121,11 +122,9 @@ include("sidebar.php");
                     <input type="text" name="sAccion" value="<?php echo $sCambioAccion; ?>" hidden>
                     <input type="text" name="idreserva" value="<?php echo $idreserva; ?>" hidden>
 
-                    <div class="form-group">
-                        <label for="nombre_cliente">Nombre del Cliente:</label>
-                        <input type="text" name="nombre_cliente" id="nombre_cliente" class="form-control" value="<?php echo $nombre_cliente; ?>" required>
-                    </div>
-                    
+                    <!-- Campo oculto para el correo del cliente como ID -->
+                    <input type="hidden" name="idcliente" id="idcliente" class="form-control" value="<?php echo $idcliente; ?>">
+
                     <div class="form-group">
                         <label for="tipo_entrenamiento">Tipo de Entrenamiento:</label>
                         <select name="tipo_entrenamiento" id="tipo_entrenamiento" class="form-control" required onchange="toggleNumParticipantes()">
