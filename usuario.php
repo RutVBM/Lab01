@@ -42,7 +42,7 @@ include("sidebar.php");
     <section class="content">
         <!-- Formulario para agregar un nuevo usuario -->
         <div class="card card-primary">
-            <div class="card-header">
+            <div class="card-header" style="background-color: orange; color: white;">
                 <h3 class="card-title">Agregar Nuevo Usuario</h3>
             </div>
             <div class="card-body">
@@ -74,7 +74,7 @@ include("sidebar.php");
                             <option value="I">Inactivo</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="submit" class="btn btn-success" style="background-color: orange; color: white;">Guardar</button>
                 </form>
             </div>
         </div>
@@ -141,3 +141,4 @@ include("sidebar.php");
 <script src="../Lab01/plugins/jquery/jquery.min.js"></script>
 <script src="../Lab01/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="../Lab01/dist/js/adminlte.min.js"></script>
+
