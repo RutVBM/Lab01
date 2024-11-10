@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 27, 2024 at 06:00 AM
+-- Generation Time: Nov 10, 2024 at 01:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -57,7 +57,9 @@ CREATE TABLE `captacion_clientes` (
 --
 
 INSERT INTO `captacion_clientes` (`idcaptacion`, `idcliente`, `tipo_cliente`, `nombre_cliente`, `contacto`, `estado`, `fecha_captacion`) VALUES
-(12, 123, 'Individual', 'José Navarro', '369852144', 'A', '2024-10-05 05:00:00');
+(12, 123, 'Individual', 'José Navarro', '369852144', 'A', '2024-10-05 05:00:00'),
+(13, 0, 'Individual', 'VIVIANA', '12345678', 'A', '2024-11-07 01:27:41'),
+(14, 0, 'Corporativo', 'Grupo Intercorp', '12345678', 'A', '2024-11-07 02:02:53');
 
 -- --------------------------------------------------------
 
@@ -85,7 +87,39 @@ CREATE TABLE `cliente` (
 INSERT INTO `cliente` (`idcliente`, `tipopersona`, `nombre`, `tipodocumento`, `numdocumento`, `direccion`, `telefono`, `correo`, `estado`, `fechregistro`) VALUES
 (1, 'J', 'Dominique ', 'DNI', '73091158', 'Terre 187', '129845754', 'pollofrito@gmail.com', 'A', '2024-10-03'),
 (2, 'N', 'Rut', 'DNI', '71404985', 'Los Cayetanitos', '12345678', 'rut.benites@gmail.com', 'A', '2024-10-05'),
-(7, 'N', 'José Luis', 'DNI', '72345982', 'PUK', '12345678', 'jose.luis@gmail.com', 'A', '2024-10-26');
+(7, 'N', 'José Luis', 'DNI', '72345982', 'PUK', '12345678', 'jose.luis@gmail.com', 'A', '2024-10-26'),
+(8, 'N', 'Luis Ortega', 'DNI', '76043201', 'Las orquideas', '5387662', 'luis.ortega@gmail.com', 'A', '2024-11-06');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `compra_insumos`
+--
+
+CREATE TABLE `compra_insumos` (
+  `id_compra` int(11) NOT NULL,
+  `id_proveedor` int(11) NOT NULL,
+  `nombre_insumo` varchar(100) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL,
+  `fecha_pedido` date NOT NULL,
+  `fecha_recepcion` date DEFAULT NULL,
+  `estado` enum('Pendiente','Recibido','Cancelado') DEFAULT 'Pendiente'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Dumping data for table `compra_insumos`
+--
+
+INSERT INTO `compra_insumos` (`id_compra`, `id_proveedor`, `nombre_insumo`, `cantidad`, `precio_unitario`, `fecha_pedido`, `fecha_recepcion`, `estado`) VALUES
+(6, 1, 'Bicicleta Estática', 10, 1200.50, '2024-10-01', '2024-10-29', 'Pendiente'),
+(7, 2, 'Caminadora Eléctrica', 5, 3200.00, '2024-09-25', '2024-10-10', 'Recibido'),
+(8, 3, 'Proteína Whey 1kg', 50, 150.00, '2024-09-28', NULL, 'Pendiente'),
+(9, 4, 'Mancuernas 10kg', 20, 100.00, '2024-10-05', NULL, 'Pendiente'),
+(10, 3, 'Creatina 500g', 30, 80.00, '2024-09-30', '2024-10-08', 'Recibido'),
+(11, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente'),
+(12, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente'),
+(13, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente');
 
 -- --------------------------------------------------------
 
@@ -108,7 +142,41 @@ CREATE TABLE `gestion_sanciones` (
 
 INSERT INTO `gestion_sanciones` (`idcliente`, `id_sancion`, `nombre_cliente`, `faltas`, `estado`, `fecha_sancion`) VALUES
 (1, 7, 'VIVIANA', 3, 'A', '2024-10-27 05:00:00'),
-(2, 8, 'Rut', 1, '', '2024-10-27 05:00:00');
+(2, 8, 'Rut', 1, '', '2024-10-27 05:00:00'),
+(1, 12, 'Rut', 3, '', '2024-11-07 05:00:00'),
+(2, 13, 'Fred Pastor', 1, '', '2024-11-07 05:00:00'),
+(2, 14, 'Fred Pastor', 1, '', '2024-11-07 05:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventario`
+--
+
+CREATE TABLE `inventario` (
+  `id_inventario` int(11) NOT NULL,
+  `nombre_material_producto` varchar(100) NOT NULL,
+  `tipo` enum('Material','Producto') NOT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `cantidad` int(11) NOT NULL,
+  `stock_minimo` int(11) NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL,
+  `id_proveedor` int(11) DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT 'Activo',
+  `fecha_registro` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Dumping data for table `inventario`
+--
+
+INSERT INTO `inventario` (`id_inventario`, `nombre_material_producto`, `tipo`, `descripcion`, `cantidad`, `stock_minimo`, `precio_unitario`, `id_proveedor`, `estado`, `fecha_registro`) VALUES
+(1, 'Colchoneta de yoga', 'Producto', 'Colchoneta antideslizante para clases de yoga', 50, 10, 25.00, 1, 'Activo', '2024-01-10'),
+(2, 'Pesas de 5kg', 'Producto', 'Pesas de mano de 5kg para musculación', 30, 15, 18.00, 2, 'Activo', '2024-01-10'),
+(3, 'Gel desinfectante', 'Material', 'Gel antibacterial para limpieza de equipos', 100, 20, 5.50, 3, 'Activo', '2024-01-10'),
+(4, 'Cinta de resistencia', 'Producto', 'Cinta elástica de resistencia para entrenamiento', 20, 7, 12.00, 2, 'Activo', '2024-01-10'),
+(5, 'Cloro', 'Material', 'Cloro para limpieza de áreas comunes', 80, 30, 4.50, 4, 'Activo', '2024-01-10'),
+(6, 'pesas', 'Material', '...', 20, 0, 20.00, 1, 'Activo', '2024-10-27');
 
 -- --------------------------------------------------------
 
@@ -145,7 +213,7 @@ CREATE TABLE `planes_entrenamiento` (
   `tipo_plan` varchar(100) NOT NULL DEFAULT '',
   `nombre_plan` varchar(100) NOT NULL,
   `duracion` int(50) NOT NULL,
-  `precio` decimal(2,0) DEFAULT NULL,
+  `precio` int(4) DEFAULT NULL,
   `estado` varchar(1) NOT NULL DEFAULT 'A',
   `fecharegistro` datetime NOT NULL DEFAULT current_timestamp(),
   `idcliente` int(11) NOT NULL,
@@ -157,9 +225,36 @@ CREATE TABLE `planes_entrenamiento` (
 --
 
 INSERT INTO `planes_entrenamiento` (`idplan`, `tipo_plan`, `nombre_plan`, `duracion`, `precio`, `estado`, `fecharegistro`, `idcliente`, `metodo_pago`) VALUES
-(1, 'Básico', 'FullBody', 12, 99, 'A', '2024-10-03 22:12:02', 0, 'Pago Efectivo'),
-(4, 'Grupal', 'Tonificador', 12, 99, 'A', '2024-10-25 00:00:00', 0, 'Pago Efectivo'),
-(5, 'Grupal', 'Rut-Ina', 20, 85, 'A', '2024-10-25 00:00:00', 0, 'Pago Efectivo');
+(5, 'Grupal', 'Rut-Ina', 20, 85, 'A', '2024-10-25 00:00:00', 0, 'Pago Efectivo'),
+(6, 'Individual', 'Aeróbicos', 10, 100, 'A', '2024-11-06 00:00:00', 0, 'Pago Efectivo'),
+(8, 'Individual', 'Bailes', 12, 590, 'A', '2024-11-09 00:00:00', 0, 'Pago Efectivo');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `proveedor`
+--
+
+CREATE TABLE `proveedor` (
+  `id_proveedor` int(11) NOT NULL,
+  `nombre_proveedor` varchar(100) NOT NULL,
+  `ruc` varchar(20) NOT NULL,
+  `direccion` varchar(255) NOT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `correo` varchar(100) DEFAULT NULL,
+  `estado` enum('A','I') DEFAULT 'A'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Dumping data for table `proveedor`
+--
+
+INSERT INTO `proveedor` (`id_proveedor`, `nombre_proveedor`, `ruc`, `direccion`, `telefono`, `correo`, `estado`) VALUES
+(1, 'ProSports S.A.C.', '20546789231', 'Av. El Derby 150, Santiago de Surco', '016789234', 'ventas@prosports.com.pe', 'A'),
+(2, 'Gym Equipment Perú', '20667893456', 'Calle La Mar 1120, Miraflores', '015678900', 'info@gym-equipment.pe', 'A'),
+(3, 'NutriFit S.A.C.', '20578934567', 'Av. Primavera 987, San Borja', '015632145', 'contacto@nutrifit.pe', 'A'),
+(4, 'Mega Fitness S.A.', '20678923455', 'Av. San Luis 2300, La Victoria', '014589002', 'ventas@megafitness.com.pe', 'A'),
+(5, 'Industrias Deportivas S.A.', '20598347213', 'Calle Comercio 456, Lince', '014587123', 'proveedores@industriasdeportivas.pe', 'I');
 
 -- --------------------------------------------------------
 
@@ -174,19 +269,17 @@ CREATE TABLE `reclamos` (
   `fecha_reclamo` date NOT NULL,
   `estado_reclamo` enum('R','E') NOT NULL,
   `fecha_solucion` date NOT NULL,
-  `id_cliente` int(11) NOT NULL,
-  `detalle_solucion` text NOT NULL
+  `id_cliente` text NOT NULL,
+  `detalle_solucion` text NOT NULL,
+  `nombre` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `reclamos`
 --
 
-INSERT INTO `reclamos` (`id_reclamo`, `tipo`, `detalle`, `fecha_reclamo`, `estado_reclamo`, `fecha_solucion`, `id_cliente`, `detalle_solucion`) VALUES
-(8, 'Reclamo', 'Holaaa', '2024-10-26', '', '2024-10-26', 4, ''),
-(11, 'Reclamo', 'Tengo un reclamo, ya que no se presento el entrenador a la hora pactada', '2024-10-26', '', '2024-10-26', 3, 'Reclamo atendido'),
-(12, 'Consulta', 'CONSULTA', '2024-10-26', 'R', '0000-00-00', 12, ''),
-(15, 'Reclamo', 'RECLAMO52', '2024-10-26', 'R', '0000-00-00', 52, '');
+INSERT INTO `reclamos` (`id_reclamo`, `tipo`, `detalle`, `fecha_reclamo`, `estado_reclamo`, `fecha_solucion`, `id_cliente`, `detalle_solucion`, `nombre`) VALUES
+(25, 'Reclamo', 'Tengo un reclamo', '2024-11-09', '', '2024-11-10', 'rut.benites@gmail.com', 'Se ha atendido correctamente su reclamo', 'Rut ');
 
 -- --------------------------------------------------------
 
@@ -216,7 +309,7 @@ CREATE TABLE `reporte_gestion` (
 
 CREATE TABLE `reserva_entrenamientos` (
   `idreserva` int(11) NOT NULL,
-  `idcliente` int(11) NOT NULL,
+  `idcliente` text NOT NULL,
   `nombre_cliente` varchar(255) NOT NULL,
   `fecha_reserva` date DEFAULT NULL,
   `tipo_entrenamiento` enum('Grupal','Individual','','') NOT NULL,
@@ -229,8 +322,8 @@ CREATE TABLE `reserva_entrenamientos` (
 --
 
 INSERT INTO `reserva_entrenamientos` (`idreserva`, `idcliente`, `nombre_cliente`, `fecha_reserva`, `tipo_entrenamiento`, `num_participantes`, `lugar_entrenamiento`) VALUES
-(2, 0, 'Amiguito', '2024-07-11', 'Individual', 1, 'Aire Libre'),
-(3, 0, 'Rut', '2024-10-26', 'Grupal', 3, 'Aire Libre');
+(13, 'rut.benites@gmail.com', 'Rut ', '2024-11-09', 'Individual', 1, 'Instalaciones'),
+(14, 'rut.benites@gmail.com', 'Rut Benites', '2024-11-12', 'Individual', 1, 'Instalaciones');
 
 -- --------------------------------------------------------
 
@@ -282,11 +375,25 @@ ALTER TABLE `cliente`
   ADD PRIMARY KEY (`idcliente`);
 
 --
+-- Indexes for table `compra_insumos`
+--
+ALTER TABLE `compra_insumos`
+  ADD PRIMARY KEY (`id_compra`),
+  ADD KEY `id_proveedor` (`id_proveedor`);
+
+--
 -- Indexes for table `gestion_sanciones`
 --
 ALTER TABLE `gestion_sanciones`
   ADD PRIMARY KEY (`id_sancion`),
   ADD KEY `idcliente` (`idcliente`);
+
+--
+-- Indexes for table `inventario`
+--
+ALTER TABLE `inventario`
+  ADD PRIMARY KEY (`id_inventario`),
+  ADD KEY `id_proveedor` (`id_proveedor`);
 
 --
 -- Indexes for table `pago_clientes`
@@ -302,11 +409,17 @@ ALTER TABLE `planes_entrenamiento`
   ADD KEY `idcliente` (`idcliente`);
 
 --
+-- Indexes for table `proveedor`
+--
+ALTER TABLE `proveedor`
+  ADD PRIMARY KEY (`id_proveedor`);
+
+--
 -- Indexes for table `reclamos`
 --
 ALTER TABLE `reclamos`
   ADD PRIMARY KEY (`id_reclamo`),
-  ADD KEY `id_cliente` (`id_cliente`);
+  ADD KEY `id_cliente` (`id_cliente`(768));
 
 --
 -- Indexes for table `reporte_gestion`
@@ -321,7 +434,7 @@ ALTER TABLE `reporte_gestion`
 --
 ALTER TABLE `reserva_entrenamientos`
   ADD PRIMARY KEY (`idreserva`),
-  ADD KEY `idcliente` (`idcliente`);
+  ADD KEY `idcliente` (`idcliente`(768));
 
 --
 -- Indexes for table `usuario`
@@ -343,19 +456,31 @@ ALTER TABLE `atencion_reclamos`
 -- AUTO_INCREMENT for table `captacion_clientes`
 --
 ALTER TABLE `captacion_clientes`
-  MODIFY `idcaptacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `idcaptacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `idcliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `idcliente` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `compra_insumos`
+--
+ALTER TABLE `compra_insumos`
+  MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `gestion_sanciones`
 --
 ALTER TABLE `gestion_sanciones`
-  MODIFY `id_sancion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_sancion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `inventario`
+--
+ALTER TABLE `inventario`
+  MODIFY `id_inventario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `pago_clientes`
@@ -367,13 +492,19 @@ ALTER TABLE `pago_clientes`
 -- AUTO_INCREMENT for table `planes_entrenamiento`
 --
 ALTER TABLE `planes_entrenamiento`
-  MODIFY `idplan` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idplan` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `proveedor`
+--
+ALTER TABLE `proveedor`
+  MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `reclamos`
 --
 ALTER TABLE `reclamos`
-  MODIFY `id_reclamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_reclamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `reporte_gestion`
@@ -385,7 +516,7 @@ ALTER TABLE `reporte_gestion`
 -- AUTO_INCREMENT for table `reserva_entrenamientos`
 --
 ALTER TABLE `reserva_entrenamientos`
-  MODIFY `idreserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idreserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `usuario`
@@ -404,10 +535,22 @@ ALTER TABLE `atencion_reclamos`
   ADD CONSTRAINT `atencion_reclamos_ibfk_1` FOREIGN KEY (`idcliente`) REFERENCES `cliente` (`idcliente`);
 
 --
+-- Constraints for table `compra_insumos`
+--
+ALTER TABLE `compra_insumos`
+  ADD CONSTRAINT `compra_insumos_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedor` (`id_proveedor`);
+
+--
 -- Constraints for table `gestion_sanciones`
 --
 ALTER TABLE `gestion_sanciones`
   ADD CONSTRAINT `gestion_sanciones_ibfk_1` FOREIGN KEY (`idcliente`) REFERENCES `cliente` (`idcliente`);
+
+--
+-- Constraints for table `inventario`
+--
+ALTER TABLE `inventario`
+  ADD CONSTRAINT `inventario_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedor` (`id_proveedor`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

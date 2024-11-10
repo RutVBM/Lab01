@@ -42,7 +42,7 @@ function EditReclamo(id_reclamo) {
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
-                                <label>Estado de Reclamo:</label>
+                                <label>Estado:</label>
                                 <select class="form-control" name="estado">
                                     <option value="">TODOS</option>
                                     <option value="pendiente" <?= $estado == "pendiente" ? "selected" : "" ?>>Pendiente</option>
@@ -81,7 +81,7 @@ function EditReclamo(id_reclamo) {
                             <th>Nombre</th>
                             <th>Tipo</th>
                             <th>Detalle</th>
-                            <th>Fecha de Reclamo</th>
+                            <th>Fecha de Solicitud</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>

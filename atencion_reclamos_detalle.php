@@ -6,7 +6,7 @@ include_once("conexion/database.php");
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "edit";
 $sTitulo = "Modificar Reclamo";
 $id_reclamo = $_POST["id_reclamo"] ?? "";
-$id_cliente = $tipo = $detalle = $fecha_reclamo = $estado_reclamo = $fecha_solucion = $detalle_solucion = "";
+$id_cliente = $nombre = $tipo = $detalle = $fecha_reclamo = $estado_reclamo = $fecha_solucion = $detalle_solucion = "";
 
 // Cargar datos del reclamo a editar si se proporciona un `id_reclamo`
 if (isset($_GET["id_reclamo"])) {
@@ -16,6 +16,7 @@ if (isset($_GET["id_reclamo"])) {
     $stmt = dbQuery("SELECT * FROM reclamos WHERE id_reclamo = ?", [$id_reclamo]);
     if ($stmt && $row = $stmt->fetch_assoc()) {
         $id_cliente = $row["id_cliente"];
+        $nombre = $row["nombre"];
         $tipo = $row["tipo"];
         $detalle = $row["detalle"];
         $fecha_reclamo = $row["fecha_reclamo"];
@@ -31,9 +32,15 @@ if (isset($_GET["id_reclamo"])) {
 // Procesar actualización de datos
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
     $estado_reclamo = $_POST["estado_reclamo"];
-    $fecha_solucion = $_POST["fecha_solucion"];
     $detalle_solucion = $_POST["detalle_solucion"]; // Capturar detalle de solución
     $id_reclamo = $_POST["id_reclamo"];
+
+    // Si el estado es "resuelto", capturar automáticamente la fecha actual como fecha de solución
+    if ($estado_reclamo == "resuelto") {
+        $fecha_solucion = date("Y-m-d"); // Captura la fecha actual
+    } else {
+        $fecha_solucion = null; // No asignar fecha de solución si no está resuelto
+    }
 
     // Actualizar reclamo existente
     $sql = "UPDATE reclamos 
@@ -68,6 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
                     </div>
 
                     <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" name="nombre" class="form-control-plaintext" value="<?= $nombre ?>" readonly>
+                    </div>
+
+                    <div class="form-group">
                         <label for="tipo">Tipo de Reclamo:</label>
                         <input type="text" name="tipo" class="form-control-plaintext" value="<?= $tipo ?>" readonly>
                     </div>
@@ -78,11 +90,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
                     </div>
 
                     <div class="form-group">
-                        <label for="fecha_reclamo">Fecha de Reclamo:</label>
+                        <label for="fecha_reclamo">Fecha de solicitud:</label>
                         <input type="text" name="fecha_reclamo" class="form-control-plaintext" value="<?= $fecha_reclamo ?>" readonly>
                     </div>
 
-                    <!-- Campos editables -->
+                    <!-- Campo editable para el estado del reclamo -->
                     <div class="form-group">
                         <label for="estado_reclamo">Estado:</label>
                         <select name="estado_reclamo" class="form-control" required>
@@ -91,10 +103,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="fecha_solucion">Fecha de Solución:</label>
-                        <input type="date" name="fecha_solucion" class="form-control" value="<?= $fecha_solucion ?>">
-                    </div>
+                    <!-- Ocultar el campo de fecha de solución -->
+                    <input type="hidden" name="fecha_solucion" value="<?= $fecha_solucion ?>">
 
                     <div class="form-group">
                         <label for="detalle_solucion">Detalle de la Solución:</label>

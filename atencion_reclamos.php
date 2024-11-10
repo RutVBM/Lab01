@@ -29,7 +29,7 @@ function EditReclamo(id_reclamo) {
             <div class="card-body">
                 <?php
                 // Consulta SQL para obtener todos los campos de la tabla "reclamos"
-                $sql = "SELECT r.id_cliente, r.id_reclamo, r.tipo, r.detalle, r.fecha_reclamo, r.estado_reclamo, r.fecha_solucion, r.detalle_solucion
+                $sql = "SELECT r.id_cliente, r.nombre, r.id_reclamo, r.tipo, r.detalle, r.fecha_reclamo, r.estado_reclamo, r.fecha_solucion, r.detalle_solucion
                         FROM reclamos r
                         WHERE r.id_reclamo > 0";
 
@@ -47,7 +47,7 @@ function EditReclamo(id_reclamo) {
                     <thead>
                         <tr>
                             <th>ID Cliente</th>
-                            <th>ID Reclamo</th>
+                            <th>Nombre</th>
                             <th>Tipo</th>
                             <th>Detalle</th>
                             <th>Fecha de Reclamo</th>
@@ -64,7 +64,7 @@ function EditReclamo(id_reclamo) {
                                 ?>
                                 <tr>
                                     <td><?= $row["id_cliente"] ?></td>
-                                    <td><?= $row["id_reclamo"] ?></td>
+                                    <td><?= $row["nombre"] ?></td>
                                     <td><?= $row["tipo"] ?></td>
                                     <td><?= $row["detalle"] ?></td>
                                     <td><?= $row["fecha_reclamo"] ?></td>
