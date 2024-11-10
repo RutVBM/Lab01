@@ -10,19 +10,17 @@ if (isset($_POST["correo"]) && isset($_POST["clave"])) {
     $num_rows = mysqli_num_rows($result);
 
     if ($num_rows > 0) {
-        $row = mysqli_fetch_array($result, MYSQLI_BOTH);   
-        $idusuario = $row["idusuario"];
-        $_SESSION["IDUSUARIO"] = $idusuario; 
-        $_SESSION["USUARIO"] = $row["nombre"] . " " . $row["apellido"]; 
-        $_SESSION["CORREO"] = $row["correo"]; // Guardar el correo en la sesión
-
-        echo "<script language='JavaScript'>";
-        echo "window.location.href='blank.php';";
-        echo "</script>";
+        $row = mysqli_fetch_array($result, MYSQLI_BOTH);
+        
+        // Guardar la información del usuario en la sesión
+        $_SESSION["IDUSUARIO"] = $row["idusuario"]; 
+        $_SESSION["USUARIO"] = $row["nombre"] . " " . $row["apellidos"]; // Guardar nombre completo en la sesión
+        $_SESSION["CORREO"] = $row["correo"]; // Guardar correo en la sesión
+        
+        // Redireccionar a la página principal después de iniciar sesión
+        echo "<script>window.location.href='blank.php';</script>";
     } else {
-        echo '<script language="JavaScript">';
-        echo 'alert("La información registrada no es válida");';
-        echo '</script>';
+        echo '<script>alert("La información registrada no es válida");</script>';
     }
 }
 ?>
@@ -130,7 +128,7 @@ if (isset($_POST["correo"]) && isset($_POST["clave"])) {
       <form action="login.php" method="post">
         <!-- correo electrónico -->
         <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Correo Electrónico" name="correo">
+          <input type="email" class="form-control" placeholder="Correo Electrónico" name="correo" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -140,7 +138,7 @@ if (isset($_POST["correo"]) && isset($_POST["clave"])) {
 
         <!-- contraseña -->
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Contraseña" name="clave">
+          <input type="password" class="form-control" placeholder="Contraseña" name="clave" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -199,4 +197,3 @@ if (isset($_POST["correo"]) && isset($_POST["clave"])) {
 <script src="../Lab01/dist/js/adminlte.min.js"></script>
 </body>
 </html>
-

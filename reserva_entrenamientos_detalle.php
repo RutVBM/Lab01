@@ -2,25 +2,16 @@
 session_start(); // Iniciar sesión para acceder a las variables de sesión
 include("header.php");
 
-$sAccion = "";
-$sSubTitulo = "";
-$sTitulo = "";
-
-// Verificar si existe la acción en GET o POST
-if (isset($_GET["sAccion"])) {
-    $sAccion = $_GET["sAccion"];
-} elseif (isset($_POST["sAccion"])) {
-    $sAccion = $_POST["sAccion"];
-}
+$sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
+$sTitulo = $sAccion == "new" ? "Crear una Reserva" : "Modificar los datos de la reserva";
+$sSubTitulo = $sAccion == "new" ? "Por favor, ingresar la información de la reserva:" : "Por favor, actualizar la información de la reserva:";
 
 // Acción 1: Creación de una plantilla vacía de valores para una nueva reserva
 if ($sAccion == "new") {
-    $sTitulo = "Crear una Reserva";
-    $sSubTitulo = "Por favor, ingresar la información de la reserva:";
     $sCambioAccion = "insert";
-    // Valores por defecto
     $idreserva = "";
     $idcliente = $_SESSION["CORREO"]; // Usar el correo del usuario logueado como ID del cliente
+    $nombre_cliente = $_SESSION["USUARIO"]; // Nombre completo del usuario logueado
     $tipo_entrenamiento = "";
     $lugar_entrenamiento = "";
     $fecha_reserva = "";
@@ -28,8 +19,6 @@ if ($sAccion == "new") {
 }
 // Acción 2: Editar datos existentes de una reserva
 elseif ($sAccion == "edit") {
-    $sTitulo = "Modificar los datos de la reserva";
-    $sSubTitulo = "Por favor, actualizar la información de la reserva:";
     $sCambioAccion = "update";
 
     // Obtener el ID de la reserva desde GET
@@ -41,6 +30,7 @@ elseif ($sAccion == "edit") {
         $result = dbQuery($sql);
         if ($row = mysqli_fetch_array($result)) {
             $idcliente = $row["idcliente"];
+            $nombre_cliente = $row["nombre_cliente"];
             $tipo_entrenamiento = $row["tipo_entrenamiento"];
             $lugar_entrenamiento = $row["lugar_entrenamiento"];
             $fecha_reserva = $row["fecha_reserva"];
@@ -52,14 +42,15 @@ elseif ($sAccion == "edit") {
 // Acción 3: Insertar una nueva reserva en la base de datos
 elseif ($sAccion == "insert") {
     $idcliente = $_POST["idcliente"];
+    $nombre_cliente = $_POST["nombre_cliente"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
     $lugar_entrenamiento = $_POST["lugar_entrenamiento"];
     $fecha_reserva = $_POST["fecha_reserva"];
     $num_participantes = $_POST["num_participantes"];
     
     // SQL para insertar una nueva reserva
-    $sql = "INSERT INTO reserva_entrenamientos (idcliente, tipo_entrenamiento, lugar_entrenamiento, fecha_reserva, num_participantes) 
-            VALUES ('$idcliente', '$tipo_entrenamiento', '$lugar_entrenamiento', '$fecha_reserva', '$num_participantes')";
+    $sql = "INSERT INTO reserva_entrenamientos (idcliente, nombre_cliente, tipo_entrenamiento, lugar_entrenamiento, fecha_reserva, num_participantes) 
+            VALUES ('$idcliente', '$nombre_cliente', '$tipo_entrenamiento', '$lugar_entrenamiento', '$fecha_reserva', '$num_participantes')";
     dbQuery($sql);
     
     // Redirigir después de insertar
@@ -68,20 +59,21 @@ elseif ($sAccion == "insert") {
     $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
     $pagina = 'reserva_entrenamientos.php?mensaje=' . $mensaje;
     header("Location: http://$host$uri/$pagina");
-    exit(); // Asegurarse de que no haya más ejecución
+    exit();
 }
 
 // Acción 4: Actualizar datos de una reserva existente
 elseif ($sAccion == "update") {
     $idreserva = $_POST["idreserva"];
     $idcliente = $_POST["idcliente"];
+    $nombre_cliente = $_POST["nombre_cliente"];
     $tipo_entrenamiento = $_POST["tipo_entrenamiento"];
     $lugar_entrenamiento = $_POST["lugar_entrenamiento"];
     $fecha_reserva = $_POST["fecha_reserva"];
     $num_participantes = $_POST["num_participantes"];
     
     // SQL para actualizar reserva
-    $sql = "UPDATE reserva_entrenamientos SET idcliente = '$idcliente', tipo_entrenamiento = '$tipo_entrenamiento', lugar_entrenamiento = '$lugar_entrenamiento', fecha_reserva = '$fecha_reserva', 
+    $sql = "UPDATE reserva_entrenamientos SET idcliente = '$idcliente', nombre_cliente = '$nombre_cliente', tipo_entrenamiento = '$tipo_entrenamiento', lugar_entrenamiento = '$lugar_entrenamiento', fecha_reserva = '$fecha_reserva', 
             num_participantes = '$num_participantes' WHERE idreserva = $idreserva";
     dbQuery($sql);
     
@@ -91,7 +83,7 @@ elseif ($sAccion == "update") {
     $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
     $pagina = 'reserva_entrenamientos.php?mensaje=' . $mensaje;
     header("Location: http://$host$uri/$pagina");
-    exit(); // Asegurarse de que no haya más ejecución
+    exit();
 }
 
 include("sidebar.php");
@@ -99,7 +91,6 @@ include("sidebar.php");
 
 <!-- Content Wrapper -->
 <div class="content-wrapper">
-    <!-- Content Header -->
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -110,20 +101,22 @@ include("sidebar.php");
         </div>
     </section>
 
-    <!-- Main content -->
     <section class="content">
-        <!-- Default box -->
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title"><?php echo $sSubTitulo; ?></h3>
             </div>
             <div class="card-body">
                 <form name="frmDatos" action="reserva_entrenamientos_detalle.php" method="post">
-                    <input type="text" name="sAccion" value="<?php echo $sCambioAccion; ?>" hidden>
-                    <input type="text" name="idreserva" value="<?php echo $idreserva; ?>" hidden>
+                    <input type="hidden" name="sAccion" value="<?php echo $sCambioAccion; ?>">
+                    <input type="hidden" name="idreserva" value="<?php echo $idreserva; ?>">
+                    <input type="hidden" name="idcliente" value="<?php echo $idcliente; ?>">
 
-                    <!-- Campo oculto para el correo del cliente como ID -->
-                    <input type="hidden" name="idcliente" id="idcliente" class="form-control" value="<?php echo $idcliente; ?>">
+                    <!-- Campo Nombre del Cliente (No editable) -->
+                    <div class="form-group">
+                        <label for="nombre_cliente">Nombre del Cliente:</label>
+                        <input type="text" name="nombre_cliente" id="nombre_cliente" class="form-control" value="<?php echo $nombre_cliente; ?>" readonly>
+                    </div>
 
                     <div class="form-group">
                         <label for="tipo_entrenamiento">Tipo de Entrenamiento:</label>
@@ -133,10 +126,10 @@ include("sidebar.php");
                         </select>
                     </div>
 
-                    <!-- Mover el campo Número de Participantes aquí, debajo del campo de Tipo de Entrenamiento -->
-                    <div class="form-group" id="num_participantes_group" style="display: none;">
+                    <!-- Campo Número de Participantes -->
+                    <div class="form-group" id="num_participantes_group">
                         <label for="num_participantes">Número de Participantes:</label>
-                        <input type="number" name="num_participantes" id="num_participantes" class="form-control" value="<?php echo $num_participantes; ?>" min="1" />
+                        <input type="number" name="num_participantes" id="num_participantes" class="form-control" value="<?php echo $num_participantes; ?>" min="1">
                     </div>
 
                     <div class="form-group">
@@ -149,7 +142,7 @@ include("sidebar.php");
 
                     <div class="form-group">
                         <label for="fecha_reserva">Fecha:</label>
-                        <input type="date" name="fecha_reserva" id="fecha_reserva" class="form-control" value="<?php echo $fecha_reserva; ?>" required />
+                        <input type="date" name="fecha_reserva" id="fecha_reserva" class="form-control" value="<?php echo $fecha_reserva; ?>" required>
                     </div>
 
                     <div class="form-group-buttons text-center">
@@ -162,16 +155,18 @@ include("sidebar.php");
     </section>
 </div>
 
-<!-- Script para mostrar/ocultar número de participantes -->
+<!-- Script para mostrar/ocultar número de participantes y asignar 1 para Individual -->
 <script>
     function toggleNumParticipantes() {
         var tipoEntrenamiento = document.getElementById('tipo_entrenamiento').value;
-        var numParticipantesGroup = document.getElementById('num_participantes_group');
+        var numParticipantes = document.getElementById('num_participantes');
         
-        if (tipoEntrenamiento === 'Grupal') {
-            numParticipantesGroup.style.display = 'block';
+        if (tipoEntrenamiento === 'Individual') {
+            numParticipantes.value = 1; // Asigna automáticamente 1 si es Individual
+            numParticipantes.readOnly = true; // Desactiva la edición del campo
         } else {
-            numParticipantesGroup.style.display = 'none';
+            numParticipantes.readOnly = false; // Permite la edición para Grupal
+            numParticipantes.value = ""; // Limpia el valor si se selecciona Grupal
         }
     }
 
@@ -179,6 +174,4 @@ include("sidebar.php");
     toggleNumParticipantes();
 </script>
 
-<?php
-include("footer.php");
-?>
+<?php include("footer.php"); ?>

@@ -43,7 +43,6 @@ include("sidebar.php");
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID Reserva</th>
                             <th>Nombre Cliente</th>
                             <th>Tipo de Entrenamiento</th>
                             <th>Número de Participantes</th>
@@ -57,7 +56,6 @@ include("sidebar.php");
                         if ($total_registros > 0) {
                             while ($row = mysqli_fetch_array($result)) {
                                 echo "<tr>
-                                    <td>{$row['idreserva']}</td>
                                     <td>{$row['nombre_cliente']}</td>
                                     <td>{$row['tipo_entrenamiento']}</td>
                                     <td>{$row['num_participantes']}</td>
@@ -71,7 +69,7 @@ include("sidebar.php");
                                 </tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='7'>No existen registros</td></tr>";
+                            echo "<tr><td colspan='6'>No existen registros</td></tr>";
                         }
                         ?>
                     </tbody>

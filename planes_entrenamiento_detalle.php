@@ -1,7 +1,11 @@
 <?php
 ob_start(); // Inicia el buffer de salida
 
+session_start(); // Asegúrate de iniciar la sesión para acceder a las variables de sesión
 include("header.php");
+
+// Obtener el correo del usuario logueado desde la sesión
+$idcliente = $_SESSION["CORREO"] ?? ""; // Asegúrate de que exista la variable de sesión "CORREO"
 
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
 $sTitulo = $sAccion == "new" ? "Registrar un nuevo plan de entrenamiento" : "Modificar los datos del plan de entrenamiento";
@@ -31,8 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $estado = $_POST["estado"];
 
     if ($sCambioAccion == "insert") {
-        $sql = "INSERT INTO planes_entrenamiento (tipo_plan, nombre_plan, duracion, precio, estado, fecharegistro) 
-                VALUES ('$tipo_plan', '$nombre_plan', '$duracion', '$precio', '$estado', CURDATE())";
+        // En el campo idcliente, guardamos el correo del usuario logueado
+        $sql = "INSERT INTO planes_entrenamiento (tipo_plan, nombre_plan, duracion, precio, estado, fecharegistro, idcliente) 
+                VALUES ('$tipo_plan', '$nombre_plan', '$duracion', '$precio', '$estado', CURDATE(), '$idcliente')";
     } else {
         $sql = "UPDATE planes_entrenamiento 
                 SET tipo_plan = '$tipo_plan', nombre_plan = '$nombre_plan', duracion = '$duracion', 
@@ -46,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 include("sidebar.php");
 ?>
-
 
 <div class="content-wrapper">
     <section class="content-header">
@@ -96,4 +100,3 @@ include("sidebar.php");
 </div>
 
 <?php include("footer.php"); ?>
-
