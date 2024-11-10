@@ -54,9 +54,6 @@ if (session_status() === PHP_SESSION_NONE) {
                                 <i class="far fa-user nav-icon"></i><p>Usuarios</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="banco.php" class="nav-link" style="color: white;">
-                                <i class="fas fa-id-card nav-icon"></i><p>Perfiles</p>
                             </a>
                         </li>
                     </ul>
