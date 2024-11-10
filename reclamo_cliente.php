@@ -59,7 +59,7 @@ function EditReclamo(id_reclamo) {
 
             <?php
             // Consulta SQL para obtener solo los campos necesarios
-            $sql = "SELECT r.id_cliente, r.id_reclamo, r.tipo, r.detalle, r.fecha_reclamo
+            $sql = "SELECT r.id_cliente, r.nombre, r.id_reclamo, r.tipo, r.detalle, r.fecha_reclamo
                     FROM reclamos r
                     WHERE r.id_reclamo > 0";
 
@@ -77,9 +77,9 @@ function EditReclamo(id_reclamo) {
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID Cliente</th>
+                            <!-- Ocultar las columnas de ID Cliente e ID Reclamo -->
+                            <th>Nombre</th>
                             <th>Tipo</th>
-                            <th>ID Reclamo</th>
                             <th>Detalle</th>
                             <th>Fecha de Reclamo</th>
                             <th>Acciones</th>
@@ -91,9 +91,9 @@ function EditReclamo(id_reclamo) {
                             while ($row = $stmt->fetch_assoc()) {
                                 ?>
                                 <tr>
-                                    <td><?= $row["id_cliente"] ?></td>
+                                    <!-- Ocultar las columnas de ID Cliente e ID Reclamo en el cuerpo de la tabla -->
+                                    <td><?= $row["nombre"] ?></td>
                                     <td><?= $row["tipo"] ?></td>
-                                    <td><?= $row["id_reclamo"] ?></td>
                                     <td><?= $row["detalle"] ?></td>
                                     <td><?= $row["fecha_reclamo"] ?></td>
                                     <td>
@@ -103,7 +103,7 @@ function EditReclamo(id_reclamo) {
                                 <?php
                             }
                         } else {
-                            echo "<tr><td colspan='6'>No existen reclamos registrados</td></tr>";
+                            echo "<tr><td colspan='5'>No existen reclamos registrados</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -123,5 +123,3 @@ $(function () {
     }).buttons().container().appendTo('#listado_wrapper .col-md-6:eq(0)');
 });
 </script>
-
-

@@ -11,6 +11,7 @@ $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
 $sTitulo = $sAccion == "new" ? "Registrar un nuevo reclamo o consulta" : "Modificar Reclamo";
 $id_reclamo = $_POST["id_reclamo"] ?? "";
 $id_cliente = $sAccion == "new" ? $_SESSION["CORREO"] : ""; // Usar el correo del usuario logueado si es una nueva entrada
+$nombre_cliente = $sAccion == "new" ? $_SESSION["USUARIO"] : ""; // Capturar nombre desde sesión
 $tipo = $detalle = "";
 
 // Verificar la acción y cargar datos si es necesario
@@ -18,9 +19,10 @@ if ($sAccion == "edit" && isset($_GET["id_reclamo"])) {
     $id_reclamo = $_GET["id_reclamo"];
 
     // Cargar datos del reclamo a editar
-    $stmt = dbQuery("SELECT id_cliente, tipo, detalle FROM reclamos WHERE id_reclamo = ?", [$id_reclamo]);
+    $stmt = dbQuery("SELECT id_cliente, nombre, tipo, detalle FROM reclamos WHERE id_reclamo = ?", [$id_reclamo]);
     if ($stmt && $row = $stmt->fetch_assoc()) {
         $id_cliente = $row["id_cliente"];
+        $nombre_cliente = $row["nombre"];
         $tipo = $row["tipo"];
         $detalle = $row["detalle"];
     } else {
@@ -32,23 +34,24 @@ if ($sAccion == "edit" && isset($_GET["id_reclamo"])) {
 // Procesar inserción o actualización de datos
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id_cliente = $_POST["id_cliente"];
+    $nombre_cliente = $_POST["nombre"];
     $tipo = $_POST["tipo"];
     $detalle = $_POST["detalle"];
     $fecha_reclamo = date("Y-m-d H:i:s"); // Captura la fecha y hora actual de Perú
 
     if ($sAccion == "insert") {
         // Insertar nuevo reclamo con fecha y hora automáticas
-        $sql = "INSERT INTO reclamos (id_cliente, tipo, detalle, fecha_reclamo) 
-                VALUES (?, ?, ?, ?)";
-        dbQuery($sql, [$id_cliente, $tipo, $detalle, $fecha_reclamo]);
+        $sql = "INSERT INTO reclamos (id_cliente, nombre, tipo, detalle, fecha_reclamo) 
+                VALUES (?, ?, ?, ?, ?)";
+        dbQuery($sql, [$id_cliente, $nombre_cliente, $tipo, $detalle, $fecha_reclamo]);
 
         header("Location: reclamo_cliente.php?mensaje=success");
         exit();
     } elseif ($sAccion == "update") {
         $sql = "UPDATE reclamos 
-                SET tipo = ?, detalle = ? 
+                SET nombre = ?, tipo = ?, detalle = ? 
                 WHERE id_reclamo = ?";
-        dbQuery($sql, [$tipo, $detalle, $id_reclamo]);
+        dbQuery($sql, [$nombre_cliente, $tipo, $detalle, $id_reclamo]);
 
         header("Location: reclamo_cliente.php?mensaje=success");
         exit();
@@ -72,6 +75,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <input type="hidden" name="id_reclamo" value="<?= $id_reclamo ?>">
                     <!-- Campo oculto para ID Cliente -->
                     <input type="hidden" name="id_cliente" value="<?= $id_cliente ?>">
+
+                    <!-- Campo para Nombre del Cliente -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Cliente:</label>
+                        <input type="text" name="nombre" class="form-control" value="<?= $nombre_cliente ?>" readonly>
+                    </div>
 
                     <!-- Campo para Tipo de Solicitud -->
                     <div class="form-group">
@@ -97,4 +106,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <?php include("footer.php"); ?>
 <?php ob_end_flush(); ?>
-
