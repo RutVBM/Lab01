@@ -138,8 +138,8 @@ if (session_status() === PHP_SESSION_NONE) {
                     </a>
                     <ul class="nav nav-treeview" style="margin-left: 15px;">
                         <li class="nav-item">
-                            <a href="operacion1.php" class="nav-link" style="color: white;">
-                                <i class="fas fa-cogs nav-icon"></i><p>Operación 1</p>
+                            <a href="contrato_personal.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-cogs nav-icon"></i><p>Contrato Personal</p>
                             </a>
                         </li>
                         <li class="nav-item">
