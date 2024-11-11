@@ -1,29 +1,49 @@
 <?php
 include("header.php");
 
-// Filtrar por tipo de reporte si es necesario
+$sAccion = isset($_GET["sAccion"]) ? $_GET["sAccion"] : (isset($_POST["sAccion"]) ? $_POST["sAccion"] : "");
+
+// Variables por defecto
+$id_reporte_gestion = "";
 $tipo_reporte = "";
-if (isset($_POST["tipo_reporte"])) $tipo_reporte = $_POST["tipo_reporte"];
+$cantidad_reclamos = 0;
+$cantidad_sanciones = 0;
+$tiempo_promedio_resolucion = 0;
+$satisfaccion_cliente = 0;
+$observaciones = "";
 
-include("sidebar.php");
+if ($sAccion == "new") {
+    $sTitulo = "Registrar un nuevo reporte de gestión";
+    $sCambioAccion = "insert";
+    $fecha_generacion = date("Y-m-d H:i:s");
+} elseif ($sAccion == "edit" && isset($_GET["id_reporte_gestion"])) {
+    $sTitulo = "Modificar los datos del reporte de gestión";
+    $sCambioAccion = "update";
+    $id_reporte_gestion = $_GET["id_reporte_gestion"];
+
+    $sql = "SELECT * FROM reporte_gestion WHERE id_reporte_gestion = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_reporte_gestion);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $tipo_reporte = $row["tipo_reporte"];
+        $cantidad_reclamos = $row["cantidad_reclamos"];
+        $cantidad_sanciones = $row["cantidad_sanciones"];
+        $tiempo_promedio_resolucion = $row["tiempo_promedio_resolucion"];
+        $satisfaccion_cliente = $row["satisfaccion_cliente"];
+        $observaciones = $row["observaciones"];
+        $fecha_generacion = $row["fecha_generacion"];
+    }
+}
 ?>
-
-<script type="text/javascript">
-function NewReporte() {
-    window.location.href = "reporte_gestion_detalle.php?sAccion=new";
-}
-
-function EditReporte(id_reporte_gestion) {
-    window.location.href = "reporte_gestion_detalle.php?sAccion=edit&id_reporte_gestion=" + id_reporte_gestion;
-}
-</script>
 
 <div class="content-wrapper">
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Lista de Reportes de Gestión</h1>
+          <h1><?php echo $sTitulo; ?></h1>
         </div>
       </div>
     </div>
@@ -31,106 +51,26 @@ function EditReporte(id_reporte_gestion) {
 
   <section class="content">
     <div class="card">
-      <div class="card-header">
-        <form action="reporte_gestion.php" method="post">
-          <div class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <label>Tipo de Reporte:</label>
-                <select class="form-control" name="tipo_reporte">
-                  <option value="">TODOS</option>
-                  <option value="reclamos" <?php if ($tipo_reporte == "reclamos") echo "selected"; ?>>Reclamos Atendidos</option>
-                  <option value="sanciones" <?php if ($tipo_reporte == "sanciones") echo "selected"; ?>>Sanciones Aplicadas</option>
-                  <option value="captacion" <?php if ($tipo_reporte == "captacion") echo "selected"; ?>>Captación de Clientes</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="form-group">
-                <button id="submit" name="button" value="submit" class="btn btn-primary">Consultar</button>
-                <button type="button" name="button" value="Nuevo" class="btn btn-success" onclick="javascript:NewReporte();">Nuevo Reporte</button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <?php
-      // Consulta SQL corregida para obtener los reportes combinados
-      $sql = "
-        SELECT rg.id_reporte_gestion, rg.tipo_reporte, rg.cantidad_reclamos, rg.cantidad_sanciones, 
-               rg.tiempo_promedio_resolucion, rg.satisfaccion_cliente, rg.fecha_generacion,
-               COUNT(r.id_reclamo) AS reclamos_resueltos, 
-               COUNT(s.id_sancion) AS sanciones_aplicadas, 
-               COUNT(c.idcaptacion) AS captacion_total
-        FROM reporte_gestion rg
-        LEFT JOIN reclamos r ON r.estado_reclamo = 'E' AND r.id_reclamo = rg.idreclamo
-        LEFT JOIN gestion_sanciones s ON s.id_sancion = rg.id_sancion
-        LEFT JOIN captacion_clientes c ON c.idcliente = rg.idusuario
-        WHERE rg.id_reporte_gestion > 0 ";
-
-      if ($tipo_reporte != "") {
-        $sql .= "AND rg.tipo_reporte = '$tipo_reporte' ";
-      }
-
-      $sql .= "GROUP BY rg.id_reporte_gestion ORDER BY rg.fecha_generacion DESC";
-      $result = dbQuery($sql);
-      $total_registros = mysqli_num_rows($result);
-      ?>
-
       <div class="card-body">
-        <table id="listado" class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Tipo de Reporte</th>
-              <th>Reclamos Resueltos</th>
-              <th>Sanciones Aplicadas</th>
-              <th>Clientes Captados</th>
-              <th>Tiempo Promedio Resolución</th>
-              <th>Satisfacción del Cliente</th>
-              <th>Fecha de Generación</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php 
-          if ($total_registros > 0) {
-            while ($row = mysqli_fetch_array($result)) {
-              ?>
-              <tr>
-                <td><?php echo ucfirst($row["tipo_reporte"]); ?></td>
-                <td><?php echo $row["reclamos_resueltos"]; ?></td>
-                <td><?php echo $row["sanciones_aplicadas"]; ?></td>
-                <td><?php echo $row["captacion_total"]; ?></td>
-                <td><?php echo $row["tiempo_promedio_resolucion"]; ?> horas</td>
-                <td><?php echo $row["satisfaccion_cliente"]; ?> / 5</td>
-                <td><?php echo $row["fecha_generacion"]; ?></td>
-                <td>
-                  <button type="button" class="btn btn-info" onclick="EditReporte(<?php echo $row['id_reporte_gestion']; ?>);">Editar</button>
-                </td>
-              </tr>
-              <?php
-            }
-          } else {
-            echo "<tr><td colspan=8>No existen registros</td></tr>";
-          }
-          ?>
-          </tbody>
-        </table>
+        <form action="reporte_gestion_detalle.php" method="post">
+          <input type="hidden" name="sAccion" value="<?php echo $sCambioAccion; ?>">
+          <input type="hidden" name="id_reporte_gestion" value="<?php echo $id_reporte_gestion; ?>">
+
+          <div class="form-group">
+            <label>Tipo de Reporte (*)</label>
+            <select class="form-control" name="tipo_reporte" required>
+              <option value="reclamos" <?php if ($tipo_reporte == "reclamos") echo "selected"; ?>>Reclamos</option>
+              <option value="sanciones" <?php if ($tipo_reporte == "sanciones") echo "selected"; ?>>Sanciones</option>
+              <option value="captacion" <?php if ($tipo_reporte == "captacion") echo "selected"; ?>>Captación de Clientes</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <a href="reporte_gestion.php" class="btn btn-secondary">Cancelar</a>
+        </form>
       </div>
     </div>
   </section>
 </div>
 
 <?php include("footer.php"); ?>
-
-<script>
-  $(function () {
-    $("#listado").DataTable({
-      "responsive": true,
-      "lengthChange": false,
-      "autoWidth": false,
-      "buttons": ["excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#listado_wrapper .col-md-6:eq(0)');
-  });
-</script>
