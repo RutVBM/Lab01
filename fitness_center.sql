@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2024 at 01:42 AM
+-- Generation Time: Nov 11, 2024 at 03:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -120,6 +120,69 @@ INSERT INTO `compra_insumos` (`id_compra`, `id_proveedor`, `nombre_insumo`, `can
 (11, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente'),
 (12, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente'),
 (13, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contratos_locales`
+--
+
+CREATE TABLE `contratos_locales` (
+  `idContratos_locales` int(11) NOT NULL,
+  `nombre_local` varchar(50) DEFAULT NULL,
+  `direccion` varchar(50) DEFAULT NULL,
+  `telefono_contacto` varchar(50) DEFAULT NULL,
+  `Finicio_contrato_local` date DEFAULT NULL,
+  `Ffin_contrato_local` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Dumping data for table `contratos_locales`
+--
+
+INSERT INTO `contratos_locales` (`idContratos_locales`, `nombre_local`, `direccion`, `telefono_contacto`, `Finicio_contrato_local`, `Ffin_contrato_local`) VALUES
+(101, 'Gimnasio Central', 'Av. Principal 123', '987654321', '2024-01-01', '2025-01-01'),
+(237, 'Fitness Club', 'Calle Secundaria 456', '912345678', '2024-02-15', '2025-02-15'),
+(289, 'Centro Funcional', 'Av. Vitalidad 707', '990123456', '2024-10-05', '2025-10-05'),
+(359, 'Centro Deportivo', 'Av. Los Deportes 789', '923456789', '2024-03-01', '2025-03-01'),
+(482, 'Wellness Center', 'Av. Bienestar 101', '934567890', '2024-04-10', '2025-04-10'),
+(519, 'Sala de Yoga', 'Calle Tranquila 202', '945678901', '2024-05-05', '2025-05-05'),
+(628, 'CrossFit Zone', 'Av. Fuerza 303', '956789012', '2024-06-20', '2025-06-20'),
+(749, 'Pilates Studio', 'Calle Armonía 404', '967890123', '2024-07-15', '2025-07-15'),
+(857, 'Club Natación', 'Av. Las Aguas 505', '978901234', '2024-08-01', '2025-08-01'),
+(963, 'Spa Relax', 'Calle Paz 606', '989012345', '2024-09-10', '2025-09-10');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contrato_personal`
+--
+
+CREATE TABLE `contrato_personal` (
+  `idContratos_personal` int(11) NOT NULL,
+  `nombre_personal` varchar(50) DEFAULT NULL,
+  `DNI_personal` varchar(50) DEFAULT NULL,
+  `telefono` varchar(50) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `Finicio_contrato_per` date DEFAULT NULL,
+  `Ffin_contrato_per` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+--
+-- Dumping data for table `contrato_personal`
+--
+
+INSERT INTO `contrato_personal` (`idContratos_personal`, `nombre_personal`, `DNI_personal`, `telefono`, `email`, `Finicio_contrato_per`, `Ffin_contrato_per`) VALUES
+(101, 'Laura Martínez', '45678901', '987654324', 'lauramartinez@example.com', '2024-04-01', '2025-04-01'),
+(123, 'Juan Pérez', '12345678', '987654321', 'juanperez@example.com', '2024-01-01', '2025-01-01'),
+(202, 'Pedro Sánchez', '56789012', '987654325', 'pedrosanchez@example.com', '2024-05-01', '2025-05-01'),
+(303, 'Ana Gómez', '67890123', '987654326', 'anagomez@example.com', '2024-06-01', '2025-06-01'),
+(404, 'Javier Ruiz', '78901234', '987654327', 'javierruiz@example.com', '2024-07-01', '2025-07-01'),
+(456, 'María López', '23456789', '987654322', 'marialopez@example.com', '2024-02-01', '2025-02-01'),
+(505, 'Elena Fernández', '89012345', '987654328', 'elenafdez@example.com', '2024-08-01', '2025-08-01'),
+(606, 'David Rodríguez', '90123456', '987654329', 'davidrodriguez@example.com', '2024-09-01', '2025-09-01'),
+(707, 'Sara Martínez', '01234567', '987654330', 'saramartinez@example.com', '2024-10-01', '2025-10-01'),
+(789, 'Carlos García', '34567890', '987654323', 'carlosgarcia@example.com', '2024-03-01', '2025-03-01');
 
 -- --------------------------------------------------------
 
@@ -348,7 +411,9 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`idusuario`, `nombre`, `apellidos`, `fechnac`, `correo`, `clave`, `estado`, `fechregistro`) VALUES
 (1, 'Adriana', 'Pastor', '2014-10-11', 'adriana.pastor@gmail.com', '1416', 'A', '0000-00-00 00:00:00.000000'),
-(2, 'Rut', 'Benites', '2014-10-09', 'rut.benites@gmail.com', '123456', 'A', '2024-10-04 03:12:57.303827');
+(2, 'Rut', 'Benites', '2014-10-09', 'rut.benites@gmail.com', '123456', 'A', '2024-10-04 03:12:57.303827'),
+(3, 'José Luis', 'Rodriguez', '2024-11-10', 'jose.luis@gmail.com', '58623', 'A', '2024-11-11 05:00:00.000000'),
+(4, 'Luis ', 'Ortega', '2024-11-10', 'luis.ortega@gmail.com', '293206528', 'A', '2024-11-11 05:00:00.000000');
 
 --
 -- Indexes for dumped tables
@@ -380,6 +445,18 @@ ALTER TABLE `cliente`
 ALTER TABLE `compra_insumos`
   ADD PRIMARY KEY (`id_compra`),
   ADD KEY `id_proveedor` (`id_proveedor`);
+
+--
+-- Indexes for table `contratos_locales`
+--
+ALTER TABLE `contratos_locales`
+  ADD PRIMARY KEY (`idContratos_locales`);
+
+--
+-- Indexes for table `contrato_personal`
+--
+ALTER TABLE `contrato_personal`
+  ADD PRIMARY KEY (`idContratos_personal`);
 
 --
 -- Indexes for table `gestion_sanciones`
@@ -522,7 +599,7 @@ ALTER TABLE `reserva_entrenamientos`
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idusuario` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idusuario` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
