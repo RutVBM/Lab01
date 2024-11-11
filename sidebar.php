@@ -143,8 +143,8 @@ if (session_status() === PHP_SESSION_NONE) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="operacion2.php" class="nav-link" style="color: white;">
-                                <i class="fas fa-cog nav-icon"></i><p>Operación 2</p>
+                            <a href="contratos_locales.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-cog nav-icon"></i><p>Contrato Locales</p>
                             </a>
                         </li>
                     </ul>
