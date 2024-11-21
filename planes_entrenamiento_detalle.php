@@ -40,12 +40,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $precio = $_POST["precio"];
     $estado = $_POST["estado"];
 
+    // Validar que tipo_plan tenga un valor permitido
+    $tipos_permitidos = ['Individual', 'Grupal'];
+    if (!in_array($tipo_plan, $tipos_permitidos)) {
+        die("Error: El tipo de plan seleccionado no es válido.");
+    }
+
+    // Procesar la inserción o actualización
     if ($sCambioAccion == "insert") {
-        // Insertar un nuevo plan asociado al correo del usuario logueado
         $sql = "INSERT INTO planes_entrenamiento (tipo_plan, nombre_plan, duracion, precio, estado, fecharegistro, idcliente) 
                 VALUES ('$tipo_plan', '$nombre_plan', '$duracion', '$precio', '$estado', CURDATE(), '$idcliente')";
     } else {
-        // Actualizar el plan existente
         $sql = "UPDATE planes_entrenamiento 
                 SET tipo_plan = '$tipo_plan', nombre_plan = '$nombre_plan', duracion = '$duracion', 
                     precio = '$precio', estado = '$estado' WHERE idplan = $idplan";
@@ -75,22 +80,26 @@ include("sidebar.php");
                     <input type="hidden" name="idplan" value="<?= $idplan ?>">
 
                     <div class="form-group">
-                        <label>Tipo de Plan (*):</label>
-                        <input type="text" name="tipo_plan" class="form-control" value="<?= $tipo_plan ?>" required>
+                        <label for="tipo_plan">Tipo de Plan (*):</label>
+                        <select name="tipo_plan" id="tipo_plan" class="form-control" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="Individual" <?= (isset($tipo_plan) && $tipo_plan === 'Individual') ? 'selected' : '' ?>>Individual</option>
+                            <option value="Grupal" <?= (isset($tipo_plan) && $tipo_plan === 'Grupal') ? 'selected' : '' ?>>Grupal</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Nombre del Plan (*):</label>
+                        <label>Nombre del Plan:</label>
                         <input type="text" name="nombre_plan" class="form-control" value="<?= $nombre_plan ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Duración (*):</label>
+                        <label>Duración:</label>
                         <input type="number" name="duracion" class="form-control" value="<?= $duracion ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Precio (*):</label>
+                        <label>Precio:</label>
                         <input type="number" step="0.01" name="precio" class="form-control" value="<?= $precio ?>" required>
                     </div>
 
