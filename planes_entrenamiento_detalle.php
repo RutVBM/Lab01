@@ -80,7 +80,7 @@ include("sidebar.php");
                     <input type="hidden" name="idplan" value="<?= $idplan ?>">
 
                     <div class="form-group">
-                        <label for="tipo_plan">Tipo de Plan (*):</label>
+                        <label for="tipo_plan">Tipo de Plan:</label>
                         <select name="tipo_plan" id="tipo_plan" class="form-control" required>
                             <option value="">Seleccione una opción</option>
                             <option value="Individual" <?= (isset($tipo_plan) && $tipo_plan === 'Individual') ? 'selected' : '' ?>>Individual</option>

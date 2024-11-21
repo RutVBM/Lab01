@@ -1,5 +1,5 @@
 <?php
-session_start();
+ob_start(); // Inicia el buffer de salida
 include("header.php");
 
 // Filtrar por tipo de plan si es necesario
@@ -115,4 +115,3 @@ function DeletePlan(idplan) {
 </div>
 
 <?php include("footer.php"); ?>
-

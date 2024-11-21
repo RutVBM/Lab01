@@ -1,10 +1,18 @@
 <?php
 ob_start();
+session_start(); // Inicia sesión
 include_once("header.php");
 include_once("conexion/database.php");
 
+// Verificar que el correo esté en la sesión
+if (!isset($_SESSION["CORREO"])) {
+    die("Error: No se encontró el correo en la sesión.");
+}
+
+$idcliente = $_SESSION["CORREO"]; // Obtener el correo desde la sesión
+
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
-$sTitulo = $sAccion == "new" ? "Registrar Captación de Cliente" : "Editar Captación";
+$sTitulo = $sAccion == "new" ? "Registrar Captación de Cliente" : "Captación";
 $sCambioAccion = $sAccion == "new" ? "insert" : "update";
 
 if ($sAccion == "edit" && isset($_GET["idcaptacion"])) {
@@ -28,9 +36,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $estado = $_POST["estado"];
 
     if ($sCambioAccion == "insert") {
-        $sql = "INSERT INTO captacion_clientes (tipo_cliente, nombre_cliente, contacto, estado, fecha_captacion) 
-                VALUES (?, ?, ?, ?, NOW())";
-        dbQuery($sql, [$tipo_cliente, $nombre_cliente, $contacto, $estado]);
+        $sql = "INSERT INTO captacion_clientes (idcliente, tipo_cliente, nombre_cliente, contacto, estado, fecha_captacion) 
+                VALUES (?, ?, ?, ?, ?, NOW())";
+        dbQuery($sql, [$idcliente, $tipo_cliente, $nombre_cliente, $contacto, $estado]);
     } else {
         $sql = "UPDATE captacion_clientes 
                 SET tipo_cliente = ?, nombre_cliente = ?, contacto = ?, estado = ? 
