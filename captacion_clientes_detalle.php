@@ -4,6 +4,8 @@ session_start(); // Inicia sesión
 include_once("header.php");
 include_once("conexion/database.php");
 
+include_once("sidebar.php");
+
 // Verificar que el correo esté en la sesión
 if (!isset($_SESSION["CORREO"])) {
     die("Error: No se encontró el correo en la sesión.");
