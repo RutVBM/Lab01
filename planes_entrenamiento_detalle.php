@@ -1,16 +1,21 @@
 <?php
-ob_start(); // Inicia el buffer de salida
-
-session_start(); // Asegúrate de iniciar la sesión para acceder a las variables de sesión
+session_start(); // Inicia la sesión para acceder a las variables
 include("header.php");
 
-// Obtener el correo del usuario logueado desde la sesión
-$idcliente = $_SESSION["CORREO"] ?? ""; // Asegúrate de que exista la variable de sesión "CORREO"
+// Verificar que el usuario esté autenticado y que su correo esté en la sesión
+if (!isset($_SESSION["CORREO"])) {
+    die("Error: No se encontró el correo en la sesión. Por favor, inicie sesión nuevamente.");
+}
 
+// Obtener el correo del usuario logueado desde la sesión
+$idcliente = $_SESSION["CORREO"];
+
+// Determinar la acción (insertar o editar)
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
 $sTitulo = $sAccion == "new" ? "Registrar un nuevo plan de entrenamiento" : "Modificar los datos del plan de entrenamiento";
 $sCambioAccion = $sAccion == "new" ? "insert" : "update";
 
+// Si es edición, obtener los datos del plan
 if ($sAccion == "edit" && isset($_GET["idplan"])) {
     $idplan = $_GET["idplan"];
     $sql = "SELECT * FROM planes_entrenamiento WHERE idplan = $idplan";
@@ -26,6 +31,7 @@ if ($sAccion == "edit" && isset($_GET["idplan"])) {
     $estado = "A";
 }
 
+// Procesar el formulario al enviarlo
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $idplan = $_POST["idplan"];
     $tipo_plan = $_POST["tipo_plan"];
@@ -35,18 +41,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $estado = $_POST["estado"];
 
     if ($sCambioAccion == "insert") {
-        // En el campo idcliente, guardamos el correo del usuario logueado
+        // Insertar un nuevo plan asociado al correo del usuario logueado
         $sql = "INSERT INTO planes_entrenamiento (tipo_plan, nombre_plan, duracion, precio, estado, fecharegistro, idcliente) 
                 VALUES ('$tipo_plan', '$nombre_plan', '$duracion', '$precio', '$estado', CURDATE(), '$idcliente')";
     } else {
+        // Actualizar el plan existente
         $sql = "UPDATE planes_entrenamiento 
                 SET tipo_plan = '$tipo_plan', nombre_plan = '$nombre_plan', duracion = '$duracion', 
                     precio = '$precio', estado = '$estado' WHERE idplan = $idplan";
     }
 
+    // Ejecutar la consulta
     dbQuery($sql);
+
+    // Redireccionar al listado de planes
     header("Location: planes_entrenamiento.php?mensaje=success");
-    exit(); // Asegura que no se siga ejecutando código después de la redirección
+    exit(); // Detener la ejecución del código después de redirigir
 }
 
 include("sidebar.php");

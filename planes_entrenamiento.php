@@ -1,6 +1,5 @@
 <?php
-ob_start(); // Inicia el buffer de salida
-
+session_start();
 include("header.php");
 
 // Filtrar por tipo de plan si es necesario
@@ -19,17 +18,15 @@ if (isset($_GET['sAccion']) && $_GET['sAccion'] == 'delete' && isset($_GET['idpl
 ?>
 
 <script type="text/javascript">
-// Redireccionar para crear un nuevo plan
+// Funciones para gestionar planes
 function NewPlan() {
     window.location.href = "planes_entrenamiento_detalle.php?sAccion=new";
 }
 
-// Redireccionar para editar un plan existente
 function EditPlan(idplan) {
     window.location.href = "planes_entrenamiento_detalle.php?sAccion=edit&idplan=" + idplan;
 }
 
-// Confirmar y eliminar un plan
 function DeletePlan(idplan) {
     if (confirm("¿Estás seguro de que deseas eliminar este plan? Esta acción no se puede deshacer.")) {
         window.location.href = "planes_entrenamiento.php?sAccion=delete&idplan=" + idplan;
@@ -39,13 +36,7 @@ function DeletePlan(idplan) {
 
 <div class="content-wrapper">
     <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Lista de Planes de Entrenamiento</h1>
-                </div>
-            </div>
-        </div>
+        <h1>Lista de Planes de Entrenamiento</h1>
     </section>
 
     <section class="content">
@@ -80,7 +71,6 @@ function DeletePlan(idplan) {
             $sql .= " ORDER BY nombre_plan";
 
             $result = dbQuery($sql);
-            $total_registros = mysqli_num_rows($result);
             ?>
 
             <div class="card-body">
@@ -97,13 +87,13 @@ function DeletePlan(idplan) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if ($total_registros > 0) {
+                        <?php if (mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_array($result)) {
                                 $estado = $row["estado"] == "A" ? "Activo" : "Inactivo";
-                                $tipo_plan = ucfirst($row["tipo_plan"]); ?>
+                                ?>
                                 <tr>
                                     <td><?= $row["nombre_plan"] ?></td>
-                                    <td><?= $tipo_plan ?></td>
+                                    <td><?= ucfirst($row["tipo_plan"]) ?></td>
                                     <td><?= $row["duracion"] ?> meses</td>
                                     <td>S/ <?= $row["precio"] ?></td>
                                     <td><?= $estado ?></td>
@@ -126,11 +116,3 @@ function DeletePlan(idplan) {
 
 <?php include("footer.php"); ?>
 
-<script>
-    $(function () {
-        $("#listado").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#listado_wrapper .col-md-6:eq(0)');
-    });
-</script>
