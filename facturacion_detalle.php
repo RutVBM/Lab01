@@ -12,10 +12,17 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $id_pago = $_GET['id'];
 
 // Consultar los detalles del pago y del usuario
-$sql = "SELECT pc.tipo_plan, pc.nombre_plan, pc.duracion, pc.precio, pc.metodo_pago, pc.fecha_pago, 
-               u.nombre, u.apellidos 
-        FROM pago_clientes pc 
-        LEFT JOIN usuario u ON pc.idusuario = u.correo 
+$sql = "SELECT 
+            pc.tipo_plan, 
+            pc.nombre_plan, 
+            pc.duracion, 
+            pc.precio, 
+            pc.metodo_pago, 
+            pc.fecha_pago, 
+            u.nombre, 
+            u.apellidos 
+        FROM pago_clientes pc
+        LEFT JOIN usuario u ON pc.idusuario = u.idusuario
         WHERE pc.id_pago = ?";
 $result = dbQuery($sql, [$id_pago]);
 
@@ -38,7 +45,7 @@ include("sidebar.php");
         <div class="card">
             <div class="card-body">
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <img src="../Lab01/logo.jpg" alt="Logo Fitness Center" width="150">
+                    <img src="logo.jpg" alt="Logo Fitness Center" width="150">
                     <h2 style="color: orange;">Factura de Pago</h2>
                     <p>Número de Ticket: <strong><?= $id_pago ?></strong></p>
                 </div>
@@ -46,7 +53,7 @@ include("sidebar.php");
                 <table class="table table-bordered">
                     <tr>
                         <th>Nombre del Cliente:</th>
-                        <td><?= htmlspecialchars($pago['nombre']) . " " . htmlspecialchars($pago['apellidos']) ?></td>
+                        <td><?= $pago['nombre'] . ' ' . $pago['apellidos'] ?></td>
                     </tr>
                     <tr>
                         <th>Fecha de Pago:</th>
