@@ -1,5 +1,6 @@
 <?php
-session_start();
+ob_start(); // Inicia el buffer de salida
+
 include("header.php");
 include_once("conexion/database.php");
 
@@ -8,7 +9,7 @@ include("sidebar.php");
 
 <script type="text/javascript">
 // Redireccionar para registrar un nuevo pago
-function NewPago() {
+function NewPlan() {
     window.location.href = "pagos_clientes_detalle.php?sAccion=new";
 }
 </script>
@@ -21,7 +22,7 @@ function NewPago() {
                     <h1>Lista de Pagos Registrados</h1>
                 </div>
                 <div class="col-sm-6">
-                    <button type="button" class="btn btn-success float-sm-right" onclick="NewPago();">Registrar Nuevo Pago</button>
+                    <button type="button" class="btn btn-success float-sm-right" onclick="NewPlan();">Registrar Nuevo Pago</button>
                 </div>
             </div>
         </div>
@@ -31,14 +32,14 @@ function NewPago() {
         <div class="card">
             <div class="card-body">
                 <?php
-                $sql = "SELECT * FROM pago_clientes ORDER BY fecha_pago DESC";
+                $sql = "SELECT tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago 
+                        FROM pago_clientes";
                 $result = dbQuery($sql);
                 ?>
 
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Tipo de Plan</th>
                             <th>Nombre del Plan</th>
                             <th>Duración</th>
@@ -50,8 +51,7 @@ function NewPago() {
                     <tbody>
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr>
-                                <td><?= $row["id_pago"] ?></td>
-                                <td><?= $row["tipo_plan"] ?></td>
+                                <td><?= ucfirst($row["tipo_plan"]) ?></td>
                                 <td><?= $row["nombre_plan"] ?></td>
                                 <td><?= $row["duracion"] ?> meses</td>
                                 <td>S/ <?= $row["precio"] ?></td>
@@ -67,7 +67,6 @@ function NewPago() {
 </div>
 
 <?php include("footer.php"); ?>
-
 <script>
 $(function () {
     $("#listado").DataTable({
