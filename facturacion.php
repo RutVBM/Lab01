@@ -74,4 +74,3 @@ $(function () {
     }).buttons().container().appendTo('#listado_wrapper .col-md-6:eq(0)');
 });
 </script>
-

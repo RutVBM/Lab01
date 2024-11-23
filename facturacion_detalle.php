@@ -35,8 +35,8 @@ include("sidebar.php");
         <div class="card">
             <div class="card-body">
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <img src="../Lab01/logo.jpg" alt="Logo Fitness Center" width="100">
-                    <h3>Factura de Pago</h3>
+                    <img src="../Lab01/logo.jpg" alt="Logo Fitness Center" width="150">
+                    <h2 style="color: orange;">Factura de Pago</h2>
                     <p>Número de Ticket: <strong><?= $id_pago ?></strong></p>
                 </div>
 
@@ -72,4 +72,9 @@ include("sidebar.php");
                 <div style="text-align: center; margin-top: 30px;">
                     <button class="btn btn-success" onclick="window.print();">Imprimir Factura</button>
                 </div>
-  
+            </div>
+        </div>
+    </section>
+</div>
+
+<?php include("footer.php"); ?>
