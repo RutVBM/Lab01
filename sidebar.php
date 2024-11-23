@@ -171,6 +171,14 @@ if (session_status() === PHP_SESSION_NONE) {
                             <a href="facturacion.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-warehouse nav-icon"></i><p>Cobros y Facturación</p>
                             </a>
+                        <li class="nav-item">
+                            <a href="reportes.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-warehouse nav-icon"></i><p>Pago a proveedores</p>
+                            </a>
+                            <li class="nav-item">
+                            <a href="reportes.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-warehouse nav-icon"></i><p>Reportes</p>
+                            </a>
                         </li>
                     </ul>
                 </li>
