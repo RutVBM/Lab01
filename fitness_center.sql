@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 11, 2024 at 03:14 AM
+-- Generation Time: Nov 23, 2024 at 10:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -254,16 +254,18 @@ CREATE TABLE `pago_clientes` (
   `duracion` int(11) NOT NULL,
   `precio` int(11) NOT NULL,
   `metodo_pago` varchar(50) NOT NULL,
-  `fecha_pago` date DEFAULT NULL
+  `fecha_pago` date DEFAULT NULL,
+  `idusuario` int(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pago_clientes`
 --
 
-INSERT INTO `pago_clientes` (`id_pago`, `tipo_plan`, `nombre_plan`, `duracion`, `precio`, `metodo_pago`, `fecha_pago`) VALUES
-(1, 'grupal', '4', 12, 99, 'transferencia', '2024-10-26'),
-(2, 'grupal', '1', 12, 99, 'efectivo', '2024-10-26');
+INSERT INTO `pago_clientes` (`id_pago`, `tipo_plan`, `nombre_plan`, `duracion`, `precio`, `metodo_pago`, `fecha_pago`, `idusuario`) VALUES
+(7, 'Individual', 'Bailes', 12, 590, 'Tarjeta', '2024-11-23', 2),
+(8, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-23', 2),
+(9, 'Individual', 'Aeróbicos', 10, 100, 'Tarjeta', '2024-11-23', 2);
 
 -- --------------------------------------------------------
 
@@ -290,7 +292,8 @@ CREATE TABLE `planes_entrenamiento` (
 INSERT INTO `planes_entrenamiento` (`idplan`, `tipo_plan`, `nombre_plan`, `duracion`, `precio`, `estado`, `fecharegistro`, `idcliente`, `metodo_pago`) VALUES
 (5, 'Grupal', 'Rut-Ina', 20, 85, 'A', '2024-10-25 00:00:00', 0, 'Pago Efectivo'),
 (6, 'Individual', 'Aeróbicos', 10, 100, 'A', '2024-11-06 00:00:00', 0, 'Pago Efectivo'),
-(8, 'Individual', 'Bailes', 12, 590, 'A', '2024-11-09 00:00:00', 0, 'Pago Efectivo');
+(8, 'Individual', 'Bailes', 12, 590, 'A', '2024-11-09 00:00:00', 0, 'Pago Efectivo'),
+(9, 'Individual', 'Gym', 5, 100, 'A', '2024-11-23 00:00:00', 0, 'Pago Efectivo');
 
 -- --------------------------------------------------------
 
@@ -399,7 +402,7 @@ CREATE TABLE `usuario` (
   `nombre` varchar(30) NOT NULL,
   `apellidos` varchar(30) DEFAULT NULL,
   `fechnac` date DEFAULT NULL,
-  `correo` varchar(1200) DEFAULT NULL,
+  `correo` varchar(255) DEFAULT NULL,
   `clave` varchar(100) DEFAULT NULL,
   `estado` char(1) NOT NULL DEFAULT 'A',
   `fechregistro` timestamp(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6)
@@ -563,13 +566,13 @@ ALTER TABLE `inventario`
 -- AUTO_INCREMENT for table `pago_clientes`
 --
 ALTER TABLE `pago_clientes`
-  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `planes_entrenamiento`
 --
 ALTER TABLE `planes_entrenamiento`
-  MODIFY `idplan` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idplan` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `proveedor`
