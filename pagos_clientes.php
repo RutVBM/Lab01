@@ -1,6 +1,5 @@
 <?php
-ob_start(); // Inicia el buffer de salida
-
+session_start();
 include("header.php");
 include_once("conexion/database.php");
 
@@ -8,8 +7,8 @@ include("sidebar.php");
 ?>
 
 <script type="text/javascript">
-// Redireccionar para crear un nuevo plan
-function NewPlan() {
+// Redireccionar para registrar un nuevo pago
+function NewPago() {
     window.location.href = "pagos_clientes_detalle.php?sAccion=new";
 }
 </script>
@@ -19,10 +18,10 @@ function NewPlan() {
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Lista de Planes de Entrenamiento</h1>
+                    <h1>Lista de Pagos Registrados</h1>
                 </div>
                 <div class="col-sm-6">
-                    <button type="button" class="btn btn-success float-sm-right" onclick="NewPlan();">Nuevo Plan</button>
+                    <button type="button" class="btn btn-success float-sm-right" onclick="NewPago();">Registrar Nuevo Pago</button>
                 </div>
             </div>
         </div>
@@ -32,26 +31,32 @@ function NewPlan() {
         <div class="card">
             <div class="card-body">
                 <?php
-                $sql = "SELECT idplan, nombre_plan, tipo_plan, duracion, precio FROM planes_entrenamiento";
+                $sql = "SELECT * FROM pago_clientes ORDER BY fecha_pago DESC";
                 $result = dbQuery($sql);
                 ?>
 
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Nombre del Plan</th>
+                            <th>ID</th>
                             <th>Tipo de Plan</th>
+                            <th>Nombre del Plan</th>
                             <th>Duración</th>
                             <th>Precio</th>
+                            <th>Método de Pago</th>
+                            <th>Fecha de Pago</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr>
+                                <td><?= $row["id_pago"] ?></td>
+                                <td><?= $row["tipo_plan"] ?></td>
                                 <td><?= $row["nombre_plan"] ?></td>
-                                <td><?= ucfirst($row["tipo_plan"]) ?></td>
                                 <td><?= $row["duracion"] ?> meses</td>
                                 <td>S/ <?= $row["precio"] ?></td>
+                                <td><?= $row["metodo_pago"] ?></td>
+                                <td><?= $row["fecha_pago"] ?></td>
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
@@ -62,6 +67,7 @@ function NewPlan() {
 </div>
 
 <?php include("footer.php"); ?>
+
 <script>
 $(function () {
     $("#listado").DataTable({

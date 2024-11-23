@@ -1,18 +1,49 @@
 <?php
-ob_start();
+session_start();
 include("header.php");
 include_once("conexion/database.php");
 
-$sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
-$sTitulo = $sAccion == "new" ? "Registrar un nuevo plan de entrenamiento" : "Modificar los datos del plan de entrenamiento";
+// Capturar el correo del usuario desde la sesión
+$correo = $_SESSION["CORREO"] ?? null;
 
+// Si no hay correo en la sesión, mostrar un error
+if (!$correo) {
+    die("Error: No se encontró el correo del usuario en la sesión.");
+}
+
+$sAccion = $_GET["sAccion"] ?? "new";
+$sTitulo = $sAccion == "new" ? "Registrar un Nuevo Pago" : "Modificar Pago";
+
+// Procesar el formulario al enviarlo
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $idplan = $_POST["idplan"];
     $metodo_pago = $_POST["metodo_pago"];
 
-    // Aquí puedes guardar el método de pago y otros detalles necesarios en la base de datos
-    header("Location: pagos_clientes.php?mensaje=success");
-    exit();
+    if ($idplan && $metodo_pago) {
+        // Obtener los detalles del plan seleccionado
+        $sqlPlan = "SELECT tipo_plan, nombre_plan, duracion, precio FROM planes_entrenamiento WHERE idplan = ?";
+        $resultPlan = dbQuery($sqlPlan, [$idplan]);
+
+        if ($resultPlan && $plan = $resultPlan->fetch_assoc()) {
+            $tipo_plan = $plan["tipo_plan"];
+            $nombre_plan = $plan["nombre_plan"];
+            $duracion = $plan["duracion"];
+            $precio = $plan["precio"];
+
+            // Insertar el pago en la base de datos con el correo como idusuario
+            $sqlInsert = "INSERT INTO pago_clientes (idusuario, tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago) 
+                          VALUES (?, ?, ?, ?, ?, ?, CURDATE())";
+            dbQuery($sqlInsert, [$correo, $tipo_plan, $nombre_plan, $duracion, $precio, $metodo_pago]);
+
+            // Redirigir a la lista de pagos
+            header("Location: pagos_clientes.php?mensaje=success");
+            exit();
+        } else {
+            $error = "No se pudo obtener la información del plan seleccionado.";
+        }
+    } else {
+        $error = "Por favor, complete todos los campos.";
+    }
 }
 
 include("sidebar.php");
@@ -26,7 +57,11 @@ include("sidebar.php");
     <section class="content">
         <div class="card">
             <div class="card-body">
-                <form method="post" action="pagos_clientes_detalle.php">
+                <?php if (isset($error)): ?>
+                    <div class="alert alert-danger"><?= $error ?></div>
+                <?php endif; ?>
+
+                <form method="post">
                     <div class="form-group">
                         <label>Nombre del Plan (*):</label>
                         <select name="idplan" id="idplan" class="form-control" required onchange="updatePlanDetails()">
@@ -42,12 +77,12 @@ include("sidebar.php");
                     </div>
 
                     <div class="form-group">
-                        <label>Duración (*):</label>
+                        <label>Duración:</label>
                         <input type="text" id="duracion" class="form-control" readonly placeholder="Duración en meses">
                     </div>
 
                     <div class="form-group">
-                        <label>Precio (*):</label>
+                        <label>Precio:</label>
                         <input type="text" id="precio" class="form-control" readonly placeholder="Precio en soles">
                     </div>
 
@@ -88,3 +123,4 @@ function updatePlanDetails() {
     }
 }
 </script>
+
