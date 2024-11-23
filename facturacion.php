@@ -35,6 +35,7 @@ function GenerateInvoice(id) {
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
+                            <th>N° Ticket</th>
                             <th>Tipo de Plan</th>
                             <th>Nombre del Plan</th>
                             <th>Duración</th>
@@ -47,7 +48,8 @@ function GenerateInvoice(id) {
                     <tbody>
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr>
-                                <td><?= ucfirst($row["tipo_plan"]) ?></td>
+                            <td><?= ucfirst($row["id_pago"]) ?></td>
+                                <td><?= $row["tipo_plan"] ?></td>
                                 <td><?= $row["nombre_plan"] ?></td>
                                 <td><?= $row["duracion"] ?> meses</td>
                                 <td>S/ <?= $row["precio"] ?></td>
