@@ -3,12 +3,12 @@ session_start();
 include("header.php");
 include_once("conexion/database.php");
 
-// Capturar el correo del usuario desde la sesión
-$correo = $_SESSION["CORREO"] ?? null;
+// Capturar el idusuario del usuario desde la sesión
+$idUsuario = $_SESSION["IDUSUARIO"] ?? null;
 
-// Si no hay correo en la sesión, mostrar un error
-if (!$correo) {
-    die("Error: No se encontró el correo del usuario en la sesión.");
+// Si no hay idusuario en la sesión, mostrar un error
+if (!$idUsuario) {
+    die("Error: No se encontró el ID del usuario en la sesión.");
 }
 
 $sAccion = $_GET["sAccion"] ?? "new";
@@ -30,10 +30,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $duracion = $plan["duracion"];
             $precio = $plan["precio"];
 
-            // Insertar el pago en la base de datos con el correo como idusuario
+            // Insertar el pago en la base de datos con el idusuario
             $sqlInsert = "INSERT INTO pago_clientes (idusuario, tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago) 
                           VALUES (?, ?, ?, ?, ?, ?, CURDATE())";
-            dbQuery($sqlInsert, [$correo, $tipo_plan, $nombre_plan, $duracion, $precio, $metodo_pago]);
+            dbQuery($sqlInsert, [$idUsuario, $tipo_plan, $nombre_plan, $duracion, $precio, $metodo_pago]);
 
             // Redirigir a la lista de pagos
             header("Location: pagos_clientes.php?mensaje=success");
@@ -123,4 +123,3 @@ function updatePlanDetails() {
     }
 }
 </script>
-
