@@ -3,55 +3,73 @@ session_start();
 include("header.php");
 include_once("conexion/database.php");
 
-$sAccion = $_GET["sAccion"] ?? null;
-$idPago = $_GET["idpago"] ?? null;
-
-// Si no hay un ID de pago, redirigir a facturacion.php
-if (!$idPago) {
-    header("Location: facturacion.php");
-    exit();
+// Verificar si se ha pasado el ID del pago
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die("Error: ID de pago no especificado.");
 }
 
-// Obtener los detalles del pago
-$sql = "SELECT * FROM pago_clientes WHERE id_pago = ?";
-$result = dbQuery($sql, [$idPago]);
+// Obtener el ID del pago
+$id_pago = $_GET['id'];
 
-if ($row = mysqli_fetch_assoc($result)) {
-    $tipo_plan = ucfirst($row['tipo_plan']);
-    $nombre_plan = $row['nombre_plan'];
-    $duracion = $row['duracion'];
-    $precio = $row['precio'];
-    $metodo_pago = $row['metodo_pago'];
-    $fecha_pago = $row['fecha_pago'];
-} else {
-    die("Error: No se encontró el pago con ID $idPago.");
+// Consultar los detalles del pago
+$sql = "SELECT tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago 
+        FROM pago_clientes WHERE id_pago = ?";
+$result = dbQuery($sql, [$id_pago]);
+
+// Verificar si se encontró el pago
+if (!$result || $result->num_rows == 0) {
+    die("Error: No se encontró el pago con el ID proporcionado.");
 }
+
+$pago = $result->fetch_assoc();
 
 include("sidebar.php");
 ?>
 
 <div class="content-wrapper">
     <section class="content-header">
-        <h1>Detalles del Pago</h1>
+        <h1>Factura de Pago</h1>
     </section>
 
     <section class="content">
         <div class="card">
             <div class="card-body">
-                <h4>Información del Pago</h4>
-                <p><strong>ID Pago:</strong> <?= $idPago ?></p>
-                <p><strong>Tipo de Plan:</strong> <?= $tipo_plan ?></p>
-                <p><strong>Nombre del Plan:</strong> <?= $nombre_plan ?></p>
-                <p><strong>Duración:</strong> <?= $duracion ?> meses</p>
-                <p><strong>Precio:</strong> S/ <?= $precio ?></p>
-                <p><strong>Método de Pago:</strong> <?= $metodo_pago ?></p>
-                <p><strong>Fecha de Pago:</strong> <?= $fecha_pago ?></p>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="../Lab01/logo.jpg" alt="Logo Fitness Center" width="100">
+                    <h3>Factura de Pago</h3>
+                    <p>Número de Ticket: <strong><?= $id_pago ?></strong></p>
+                </div>
 
-                <a href="generar_factura.php?idpago=<?= $idPago ?>" class="btn btn-primary">Generar Factura</a>
-                <a href="facturacion.php" class="btn btn-secondary">Regresar</a>
-            </div>
-        </div>
-    </section>
-</div>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Fecha de Pago:</th>
+                        <td><?= $pago['fecha_pago'] ?></td>
+                    </tr>
+                    <tr>
+                        <th>Tipo de Plan:</th>
+                        <td><?= $pago['tipo_plan'] ?></td>
+                    </tr>
+                    <tr>
+                        <th>Nombre del Plan:</th>
+                        <td><?= $pago['nombre_plan'] ?></td>
+                    </tr>
+                    <tr>
+                        <th>Duración:</th>
+                        <td><?= $pago['duracion'] ?> meses</td>
+                    </tr>
+                    <tr>
+                        <th>Precio:</th>
+                        <td>S/ <?= $pago['precio'] ?></td>
+                    </tr>
+                    <tr>
+                        <th>Método de Pago:</th>
+                        <td><?= $pago['metodo_pago'] ?></td>
+                    </tr>
+                </table>
 
-<?php include("footer.php"); ?>
+                <h4 style="text-align: right; margin-top: 20px;">Total Pagado: <strong>S/ <?= $pago['precio'] ?></strong></h4>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-success" onclick="window.print();">Imprimir Factura</button>
+                </div>
+  

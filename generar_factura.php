@@ -1,27 +1,25 @@
 <?php
-include_once("conexion/database.php");
+// Conexión a la base de datos y configuración
+include("conexion/database.php");
 
-$idPago = $_GET["idpago"] ?? null;
+// Obtener el ID del pago desde la URL
+$idPago = $_GET['id'] ?? null;
 
-// Verificar que se pase un ID de pago
+// Verificar que el ID del pago esté presente
 if (!$idPago) {
-    die("Error: No se especificó el ID del pago.");
+    die("Error: ID de pago no especificado.");
 }
 
-// Obtener los detalles del pago
-$sql = "SELECT * FROM pago_clientes WHERE id_pago = ?";
+// Obtener los detalles del pago desde la base de datos
+$sql = "SELECT tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago 
+        FROM pago_clientes WHERE id_pago = ?";
 $result = dbQuery($sql, [$idPago]);
 
-if ($row = mysqli_fetch_assoc($result)) {
-    $tipo_plan = ucfirst($row['tipo_plan']);
-    $nombre_plan = $row['nombre_plan'];
-    $duracion = $row['duracion'];
-    $precio = $row['precio'];
-    $metodo_pago = $row['metodo_pago'];
-    $fecha_pago = $row['fecha_pago'];
-} else {
-    die("Error: No se encontró el pago con ID $idPago.");
+if ($result->num_rows == 0) {
+    die("Error: No se encontró el pago especificado.");
 }
+
+$pago = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -33,72 +31,133 @@ if ($row = mysqli_fetch_assoc($result)) {
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .factura-container {
-            max-width: 800px;
-            margin: 0 auto;
-            border: 1px solid #ccc;
+            margin: 0;
             padding: 20px;
+            background-color: #f9f9f9;
         }
-        h1, h2, h3 {
+
+        .factura-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .factura-header {
             text-align: center;
+            margin-bottom: 20px;
         }
-        table {
+
+        .factura-header img {
+            width: 120px;
+            margin-bottom: 10px;
+        }
+
+        .factura-header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ff7300;
+        }
+
+        .factura-header h2 {
+            margin: 5px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .factura-header p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .factura-detalle {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        table, th, td {
-            border: 1px solid #000;
-        }
-        th, td {
-            padding: 10px;
+
+        .factura-detalle th, .factura-detalle td {
+            border: 1px solid #ddd;
+            padding: 8px;
             text-align: left;
         }
-        .btn-imprimir {
+
+        .factura-detalle th {
+            background-color: #ff7300;
+            color: #ffffff;
+        }
+
+        .factura-total {
+            text-align: right;
             margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .btn-imprimir {
             display: block;
             width: 100%;
+            margin-top: 20px;
+            padding: 10px;
             text-align: center;
+            font-size: 16px;
+            background-color: #ff7300;
+            color: #ffffff;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-imprimir:hover {
+            background-color: #e56300;
         }
     </style>
 </head>
 <body>
     <div class="factura-container">
-        <h1>Fitness Center</h1>
-        <h2>Factura de Pago</h2>
-        <h3>Número de Ticket: <?= $idPago ?></h3>
+        <div class="factura-header">
+            <img src="logo.jpg" alt="Logo de Fitness Center">
+            <h1>Fitness Center</h1>
+            <h2>Factura de Pago</h2>
+            <p>Número de Ticket: <?= htmlspecialchars($idPago) ?></p>
+            <p>Fecha de Pago: <?= htmlspecialchars($pago['fecha_pago']) ?></p>
+        </div>
 
-        <p><strong>Fecha de Pago:</strong> <?= $fecha_pago ?></p>
-        <table>
+        <table class="factura-detalle">
             <tr>
                 <th>Detalle</th>
                 <th>Información</th>
             </tr>
             <tr>
                 <td>Tipo de Plan</td>
-                <td><?= $tipo_plan ?></td>
+                <td><?= htmlspecialchars($pago['tipo_plan']) ?></td>
             </tr>
             <tr>
                 <td>Nombre del Plan</td>
-                <td><?= $nombre_plan ?></td>
+                <td><?= htmlspecialchars($pago['nombre_plan']) ?></td>
             </tr>
             <tr>
                 <td>Duración</td>
-                <td><?= $duracion ?> meses</td>
+                <td><?= htmlspecialchars($pago['duracion']) ?> meses</td>
             </tr>
             <tr>
                 <td>Precio</td>
-                <td>S/ <?= $precio ?></td>
+                <td>S/ <?= htmlspecialchars($pago['precio']) ?></td>
             </tr>
             <tr>
                 <td>Método de Pago</td>
-                <td><?= $metodo_pago ?></td>
+                <td><?= htmlspecialchars($pago['metodo_pago']) ?></td>
             </tr>
         </table>
 
-        <p><strong>Total Pagado:</strong> S/ <?= $precio ?></p>
+        <div class="factura-total">
+            <strong>Total Pagado: S/ <?= htmlspecialchars($pago['precio']) ?></strong>
+        </div>
 
         <button class="btn-imprimir" onclick="window.print()">Imprimir Factura</button>
     </div>

@@ -1,16 +1,14 @@
 <?php
 ob_start(); // Inicia el buffer de salida
-
 include("header.php");
 include_once("conexion/database.php");
-
 include("sidebar.php");
 ?>
 
 <script type="text/javascript">
-// Función para generar la factura
-function GenerarFactura(idPago) {
-    window.location.href = "generar_factura.php?idpago=" + idPago;
+// Redireccionar para generar una factura
+function GenerateInvoice(id) {
+    window.location.href = "facturacion_detalle.php?id=" + id;
 }
 </script>
 
@@ -37,7 +35,6 @@ function GenerarFactura(idPago) {
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID Pago</th>
                             <th>Tipo de Plan</th>
                             <th>Nombre del Plan</th>
                             <th>Duración</th>
@@ -50,7 +47,6 @@ function GenerarFactura(idPago) {
                     <tbody>
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr>
-                                <td><?= $row["id_pago"] ?></td>
                                 <td><?= ucfirst($row["tipo_plan"]) ?></td>
                                 <td><?= $row["nombre_plan"] ?></td>
                                 <td><?= $row["duracion"] ?> meses</td>
@@ -58,7 +54,7 @@ function GenerarFactura(idPago) {
                                 <td><?= $row["metodo_pago"] ?></td>
                                 <td><?= $row["fecha_pago"] ?></td>
                                 <td>
-                                    <button type="button" class="btn btn-primary" onclick="GenerarFactura(<?= $row['id_pago'] ?>);">Generar Factura</button>
+                                    <button class="btn btn-primary" onclick="GenerateInvoice(<?= $row['id_pago'] ?>);">Generar Factura</button>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -78,3 +74,4 @@ $(function () {
     }).buttons().container().appendTo('#listado_wrapper .col-md-6:eq(0)');
 });
 </script>
+
