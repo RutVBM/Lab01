@@ -32,7 +32,7 @@ function NewPlan() {
         <div class="card">
             <div class="card-body">
                 <?php
-                $sql = "SELECT tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago 
+                $sql = "SELECT id_pago, tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago 
                         FROM pago_clientes";
                 $result = dbQuery($sql);
                 ?>
@@ -40,6 +40,7 @@ function NewPlan() {
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
+                            <th>N° Ticket</th>
                             <th>Tipo de Plan</th>
                             <th>Nombre del Plan</th>
                             <th>Duración</th>
@@ -51,7 +52,8 @@ function NewPlan() {
                     <tbody>
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr>
-                                <td><?= ucfirst($row["tipo_plan"]) ?></td>
+                                <td><?= ucfirst($row["id_pago"]) ?></td>
+                                <td><?= $row["tipo_plan"]?></td>
                                 <td><?= $row["nombre_plan"] ?></td>
                                 <td><?= $row["duracion"] ?> meses</td>
                                 <td>S/ <?= $row["precio"] ?></td>
