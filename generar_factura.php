@@ -68,7 +68,7 @@ if ($row = mysqli_fetch_assoc($result)) {
     <div class="factura-container">
         <h1>Fitness Center</h1>
         <h2>Factura de Pago</h2>
-        <h3>ID de Pago: <?= $idPago ?></h3>
+        <h3>Número de Ticket: <?= $idPago ?></h3>
 
         <p><strong>Fecha de Pago:</strong> <?= $fecha_pago ?></p>
         <table>
