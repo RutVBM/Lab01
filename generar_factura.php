@@ -10,11 +10,15 @@ if (!$idPago) {
     die("Error: ID de pago no especificado.");
 }
 
-// Obtener los detalles del pago desde la base de datos
-$sql = "SELECT tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago 
-        FROM pago_clientes WHERE id_pago = ?";
+// Obtener los detalles del pago desde la base de datos junto con el nombre y apellidos del usuario
+$sql = "SELECT pc.tipo_plan, pc.nombre_plan, pc.duracion, pc.precio, pc.metodo_pago, pc.fecha_pago, 
+               u.nombre, u.apellidos
+        FROM pago_clientes pc 
+        LEFT JOIN usuario u ON pc.idusuario = u.idusuario 
+        WHERE pc.id_pago = ?";
 $result = dbQuery($sql, [$idPago]);
 
+// Verificar si se obtuvo el resultado
 if ($result->num_rows == 0) {
     die("Error: No se encontró el pago especificado.");
 }
@@ -126,6 +130,7 @@ $pago = $result->fetch_assoc();
             <h2>Factura de Pago</h2>
             <p>Número de Ticket: <?= htmlspecialchars($idPago) ?></p>
             <p>Fecha de Pago: <?= htmlspecialchars($pago['fecha_pago']) ?></p>
+            <p>Cliente: <?= htmlspecialchars($pago['nombre'] . ' ' . $pago['apellidos']) ?></p>
         </div>
 
         <table class="factura-detalle">

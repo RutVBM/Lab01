@@ -11,9 +11,12 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 // Obtener el ID del pago
 $id_pago = $_GET['id'];
 
-// Consultar los detalles del pago
-$sql = "SELECT tipo_plan, nombre_plan, duracion, precio, metodo_pago, fecha_pago 
-        FROM pago_clientes WHERE id_pago = ?";
+// Consultar los detalles del pago y del usuario
+$sql = "SELECT pc.tipo_plan, pc.nombre_plan, pc.duracion, pc.precio, pc.metodo_pago, pc.fecha_pago, 
+               u.nombre, u.apellidos 
+        FROM pago_clientes pc 
+        LEFT JOIN usuario u ON pc.idusuario = u.correo 
+        WHERE pc.id_pago = ?";
 $result = dbQuery($sql, [$id_pago]);
 
 // Verificar si se encontró el pago
@@ -41,6 +44,10 @@ include("sidebar.php");
                 </div>
 
                 <table class="table table-bordered">
+                    <tr>
+                        <th>Nombre del Cliente:</th>
+                        <td><?= htmlspecialchars($pago['nombre']) . " " . htmlspecialchars($pago['apellidos']) ?></td>
+                    </tr>
                     <tr>
                         <th>Fecha de Pago:</th>
                         <td><?= $pago['fecha_pago'] ?></td>
