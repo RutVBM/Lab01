@@ -167,6 +167,11 @@ if (session_status() === PHP_SESSION_NONE) {
                                 <i class="fas fa-warehouse nav-icon"></i><p>Inventario</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="facturacion.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-warehouse nav-icon"></i><p>Cobros y Facturación</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>
