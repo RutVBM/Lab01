@@ -4,59 +4,52 @@ include_once("conexion/database.php");
 
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
 
-// Configurar título y valores por defecto para la creación de un nuevo registro
+// Configurar valores predeterminados
 if ($sAccion == "new") {
     $sTitulo = "Registrar un nuevo contrato de local";
-    $sSubTitulo = "Por favor, ingresar la información del contrato de local [(*) datos obligatorios]:";
+    $sSubTitulo = "Por favor, ingrese la información del contrato [(*) campos obligatorios]:";
     $sCambioAccion = "insert";
-    $idContratos_locales = "";
-    $nombre_local = "";
-    $direccion = "";
-    $telefono_contacto = "";
-    $Finicio_contrato_local = "";
-    $Ffin_contrato_local = "";
-} elseif ($sAccion == "edit" && isset($_GET["idContratos_locales"])) {
-    $sTitulo = "Modificar datos del contrato de local";
-    $sSubTitulo = "Por favor, actualizar la información del contrato de local [(*) datos obligatorios]:";
+    $id_contratacion_local = "";
+    $id_local = "";
+    $hora_inicio = "";
+    $hora_fin = "";
+    $estado = "Activo";
+} elseif ($sAccion == "edit" && isset($_GET["id_contratacion_local"])) {
+    $sTitulo = "Editar contrato de local";
+    $sSubTitulo = "Actualice la información del contrato:";
     $sCambioAccion = "update";
-    $idContratos_locales = $_GET["idContratos_locales"];
+    $id_contratacion_local = $_GET["id_contratacion_local"];
     
-    // Cargar los datos del contrato para editar
-    $sql = "SELECT * FROM contratos_locales WHERE idContratos_locales = ?";
-    $stmt = dbQuery($sql, [$idContratos_locales]);
+    // Cargar datos existentes
+    $sql = "SELECT * FROM contratos_locales WHERE id_contratacion_local = ?";
+    $stmt = dbQuery($sql, [$id_contratacion_local]);
     if ($row = $stmt->fetch_assoc()) {
-        $nombre_local = $row["nombre_local"];
-        $direccion = $row["direccion"];
-        $telefono_contacto = $row["telefono_contacto"];
-        $Finicio_contrato_local = $row["Finicio_contrato_local"];
-        $Ffin_contrato_local = $row["Ffin_contrato_local"];
+        $id_local = $row["id_local"];
+        $hora_inicio = $row["hora_inicio"];
+        $hora_fin = $row["hora_fin"];
+        $estado = $row["estado"];
     }
 } elseif ($sAccion == "insert") {
-    // Insertar un nuevo registro
-    $nombre_local = $_POST["nombre_local"];
-    $direccion = $_POST["direccion"];
-    $telefono_contacto = $_POST["telefono_contacto"];
-    $Finicio_contrato_local = $_POST["Finicio_contrato_local"];
-    $Ffin_contrato_local = $_POST["Ffin_contrato_local"];
+    $id_local = $_POST["id_local"];
+    $hora_inicio = $_POST["hora_inicio"];
+    $hora_fin = $_POST["hora_fin"];
+    $estado = $_POST["estado"];
     
-    $sql = "INSERT INTO contrato_locales (nombre_local, direccion, telefono_contacto, Finicio_contrato_local, Ffin_contrato_local)
-            VALUES (?, ?, ?, ?, ?)";
-    dbQuery($sql, [$nombre_local, $direccion, $telefono_contacto, $Finicio_contrato_local, $Ffin_contrato_local]);
+    $sql = "INSERT INTO contratos_locales (id_local, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?)";
+    dbQuery($sql, [$id_local, $hora_inicio, $hora_fin, $estado]);
     header("Location: contratos_locales.php?mensaje=1");
     exit();
 } elseif ($sAccion == "update") {
-    // Actualizar el registro existente
-    $idContratos_locales = $_POST["idContratos_locales"];
-    $nombre_local = $_POST["nombre_local"];
-    $direccion = $_POST["direccion"];
-    $telefono_contacto = $_POST["telefono_contacto"];
-    $Finicio_contrato_local = $_POST["Finicio_contrato_local"];
-    $Ffin_contrato_local = $_POST["Ffin_contrato_local"];
+    $id_contratacion_local = $_POST["id_contratacion_local"];
+    $id_local = $_POST["id_local"];
+    $hora_inicio = $_POST["hora_inicio"];
+    $hora_fin = $_POST["hora_fin"];
+    $estado = $_POST["estado"];
     
-    $sql = "UPDATE contrato_locales 
-            SET nombre_local = ?, direccion = ?, telefono_contacto = ?, Finicio_contrato_local = ?, Ffin_contrato_local = ?
-            WHERE idContratos_locales = ?";
-    dbQuery($sql, [$nombre_local, $direccion, $telefono_contacto, $Finicio_contrato_local, $Ffin_contrato_local, $idContratos_locales]);
+    $sql = "UPDATE contratos_locales 
+            SET id_local = ?, hora_inicio = ?, hora_fin = ?, estado = ? 
+            WHERE id_contratacion_local = ?";
+    dbQuery($sql, [$id_local, $hora_inicio, $hora_fin, $estado, $id_contratacion_local]);
     header("Location: contratos_locales.php?mensaje=2");
     exit();
 }
@@ -64,13 +57,12 @@ if ($sAccion == "new") {
 include("sidebar.php");
 ?>
 
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1><?php echo $sTitulo; ?></h1>
+                    <h1><?= $sTitulo; ?></h1>
                 </div>
             </div>
         </div>
@@ -79,37 +71,44 @@ include("sidebar.php");
     <section class="content">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><?php echo $sSubTitulo; ?></h3>
+                <h3 class="card-title"><?= $sSubTitulo; ?></h3>
             </div>
-
             <div class="card-body">
                 <form action="contratos_locales_detalle.php" method="post">
-                    <input type="hidden" name="sAccion" value="<?php echo $sCambioAccion; ?>">
-                    <input type="hidden" name="idContratos_locales" value="<?php echo $idContratos_locales; ?>">
+                    <input type="hidden" name="sAccion" value="<?= $sCambioAccion; ?>">
+                    <input type="hidden" name="id_contratacion_local" value="<?= $id_contratacion_local; ?>">
 
                     <div class="form-group">
-                        <label for="nombre_local">Nombre del Local (*):</label>
-                        <input type="text" name="nombre_local" class="form-control" value="<?php echo $nombre_local; ?>" required>
+                        <label for="id_local">Seleccionar Local (*):</label>
+                        <select name="id_local" class="form-control" required>
+                            <option value="">Seleccione un local</option>
+                            <?php
+                            $sql_locales = "SELECT id_local, nombre_parque FROM locales";
+                            $result_locales = dbQuery($sql_locales);
+                            while ($local = mysqli_fetch_assoc($result_locales)): ?>
+                                <option value="<?= $local['id_local']; ?>" <?= $local['id_local'] == $id_local ? 'selected' : ''; ?>>
+                                    <?= $local['nombre_parque']; ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="direccion">Dirección (*):</label>
-                        <input type="text" name="direccion" class="form-control" value="<?php echo $direccion; ?>" required>
+                        <label for="hora_inicio">Hora Inicio (*):</label>
+                        <input type="time" name="hora_inicio" class="form-control" value="<?= $hora_inicio; ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="telefono_contacto">Teléfono de Contacto (*):</label>
-                        <input type="text" name="telefono_contacto" class="form-control" value="<?php echo $telefono_contacto; ?>" required>
+                        <label for="hora_fin">Hora Fin (*):</label>
+                        <input type="time" name="hora_fin" class="form-control" value="<?= $hora_fin; ?>" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="Finicio_contrato_local">Fecha de Inicio (*):</label>
-                        <input type="date" name="Finicio_contrato_local" class="form-control" value="<?php echo $Finicio_contrato_local; ?>" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="Ffin_contrato_local">Fecha de Fin (*):</label>
-                        <input type="date" name="Ffin_contrato_local" class="form-control" value="<?php echo $Ffin_contrato_local; ?>" required>
+                        <label for="estado">Estado (*):</label>
+                        <select name="estado" class="form-control" required>
+                            <option value="Activo" <?= $estado == "Activo" ? 'selected' : ''; ?>>Activo</option>
+                            <option value="Inactivo" <?= $estado == "Inactivo" ? 'selected' : ''; ?>>Inactivo</option>
+                        </select>
                     </div>
 
                     <a href="contratos_locales.php" class="btn btn-primary" style="background-color: orange;">Regresar</a>
@@ -120,6 +119,4 @@ include("sidebar.php");
     </section>
 </div>
 
-<?php
-include("footer.php");
-?>
+<?php include("footer.php"); ?>

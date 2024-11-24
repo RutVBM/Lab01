@@ -1,7 +1,6 @@
 <?php
 include("header.php");
 include_once("conexion/database.php");
-
 include("sidebar.php");
 ?>
 
@@ -13,7 +12,7 @@ include("sidebar.php");
                     <h1>Lista de Contratos de Locales</h1>
                 </div>
                 <div class="col-sm-6">
-                    <!-- Botón para agregar un nuevo contrato, abre contratos_locales_detalle.php en una página separada -->
+                    <!-- Botón para agregar un nuevo contrato -->
                     <a href="contratos_locales_detalle.php?sAccion=new" class="btn btn-primary float-sm-right" style="background-color: orange;">
                         Agregar nuevo contrato de local
                     </a>
@@ -26,11 +25,11 @@ include("sidebar.php");
         <div class="card">
             <div class="card-body">
                 <?php
-                // Consulta para obtener los contratos de locales
-                $sql = "SELECT idContratos_locales, nombre_local, direccion, telefono_contacto, Finicio_contrato_local, Ffin_contrato_local 
-                        FROM contratos_locales";
+                // Consulta para obtener los contratos con detalles del local
+                $sql = "SELECT cl.id_contratacion_local, l.nombre_parque AS nombre_local, l.direccion, l.capacidad, cl.hora_inicio, cl.hora_fin, cl.estado
+                        FROM contratos_locales cl
+                        INNER JOIN locales l ON cl.id_local = l.id_local";
                 $result = dbQuery($sql);
-                $total_registros = mysqli_num_rows($result);
                 ?>
 
                 <table id="listado" class="table table-bordered table-striped">
@@ -38,33 +37,27 @@ include("sidebar.php");
                         <tr>
                             <th>Nombre del Local</th>
                             <th>Dirección</th>
-                            <th>Teléfono de Contacto</th>
-                            <th>Fecha de Inicio</th>
-                            <th>Fecha de Fin</th>
+                            <th>Capacidad</th>
+                            <th>Hora Inicio</th>
+                            <th>Hora Fin</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        if ($total_registros > 0) {
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                ?>
-                                <tr>
-                                    <td><?php echo $row["nombre_local"]; ?></td>
-                                    <td><?php echo $row["direccion"]; ?></td>
-                                    <td><?php echo $row["telefono_contacto"]; ?></td>
-                                    <td><?php echo $row["Finicio_contrato_local"]; ?></td>
-                                    <td><?php echo $row["Ffin_contrato_local"]; ?></td>
-                                    <td>
-                                        <a href="contratos_locales_detalle.php?sAccion=edit&idContratos_locales=<?php echo $row['idContratos_locales']; ?>" class="btn btn-info">Editar</a>
-                                    </td>
-                                </tr>
-                                <?php
-                            }
-                        } else {
-                            echo "<tr><td colspan='6'>No existen contratos de locales registrados</td></tr>";
-                        }
-                        ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr>
+                                <td><?= $row["nombre_local"] ?></td>
+                                <td><?= $row["direccion"] ?></td>
+                                <td><?= $row["capacidad"] ?></td>
+                                <td><?= $row["hora_inicio"] ?></td>
+                                <td><?= $row["hora_fin"] ?></td>
+                                <td><?= ucfirst($row["estado"]) ?></td>
+                                <td>
+                                    <a href="contratos_locales_detalle.php?sAccion=edit&id_contratacion_local=<?= $row['id_contratacion_local']; ?>" class="btn btn-info">Editar</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
                     </tbody>
                 </table>
             </div>
