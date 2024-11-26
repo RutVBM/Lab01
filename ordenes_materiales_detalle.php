@@ -28,12 +28,11 @@ if ($sAccion == "new") {
         $fecha = $row["fecha"];
     }
 } elseif ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $id_orden = $_POST["id_orden"] ?? null;
     $id_inventario = $_POST["id_inventario"];
     $cantidad = $_POST["cantidad"];
     $fecha = $_POST["fecha"];
 
-    // Obtener el precio unitario del inventario
+    // Calcular el subtotal
     $sql_precio = "SELECT precio_unitario FROM inventario WHERE id_inventario = ?";
     $stmt_precio = dbQuery($sql_precio, [$id_inventario]);
     $precio_unitario = $stmt_precio->fetch_assoc()["precio_unitario"];
@@ -44,6 +43,7 @@ if ($sAccion == "new") {
                 VALUES (?, ?, ?, 'Pendiente', ?)";
         dbQuery($sql, [$id_inventario, $cantidad, $subtotal, $fecha]);
     } elseif ($sAccion == "update") {
+        $id_orden = $_POST["id_orden"];
         $sql = "UPDATE ordenes_materiales 
                 SET id_inventario = ?, cantidad = ?, subtotal = ?, fecha = ?
                 WHERE id_orden = ?";
