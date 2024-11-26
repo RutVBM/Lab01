@@ -1,4 +1,4 @@
-<?php
+<?php 
 include("header.php");
 include_once("conexion/database.php");
 include("sidebar.php");

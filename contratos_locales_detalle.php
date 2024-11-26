@@ -11,6 +11,7 @@ if ($sAccion == "new") {
     $sCambioAccion = "insert";
     $id_contratacion_local = "";
     $id_local = "";
+    $id_dia = [];
     $hora_inicio = "";
     $hora_fin = "";
     $estado = "Activo";
@@ -25,31 +26,34 @@ if ($sAccion == "new") {
     $stmt = dbQuery($sql, [$id_contratacion_local]);
     if ($row = $stmt->fetch_assoc()) {
         $id_local = $row["id_local"];
+        $id_dia = explode(",", $row["id_dia"]); // Convertir los días a un array
         $hora_inicio = $row["hora_inicio"];
         $hora_fin = $row["hora_fin"];
         $estado = $row["estado"];
     }
 } elseif ($sAccion == "insert") {
     $id_local = $_POST["id_local"];
+    $id_dia = implode(",", $_POST["id_dia"]); // Convertir el array de días en una cadena separada por comas
     $hora_inicio = $_POST["hora_inicio"];
     $hora_fin = $_POST["hora_fin"];
     $estado = $_POST["estado"];
     
-    $sql = "INSERT INTO contratos_locales (id_local, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?)";
-    dbQuery($sql, [$id_local, $hora_inicio, $hora_fin, $estado]);
+    $sql = "INSERT INTO contratos_locales (id_local, id_dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?)";
+    dbQuery($sql, [$id_local, $id_dia, $hora_inicio, $hora_fin, $estado]);
     header("Location: contratos_locales.php?mensaje=1");
     exit();
 } elseif ($sAccion == "update") {
     $id_contratacion_local = $_POST["id_contratacion_local"];
     $id_local = $_POST["id_local"];
+    $id_dia = implode(",", $_POST["id_dia"]); // Convertir los días seleccionados en una cadena separada por comas
     $hora_inicio = $_POST["hora_inicio"];
     $hora_fin = $_POST["hora_fin"];
     $estado = $_POST["estado"];
     
     $sql = "UPDATE contratos_locales 
-            SET id_local = ?, hora_inicio = ?, hora_fin = ?, estado = ? 
+            SET id_local = ?, id_dia = ?, hora_inicio = ?, hora_fin = ?, estado = ? 
             WHERE id_contratacion_local = ?";
-    dbQuery($sql, [$id_local, $hora_inicio, $hora_fin, $estado, $id_contratacion_local]);
+    dbQuery($sql, [$id_local, $id_dia, $hora_inicio, $hora_fin, $estado, $id_contratacion_local]);
     header("Location: contratos_locales.php?mensaje=2");
     exit();
 }
@@ -88,6 +92,20 @@ include("sidebar.php");
                             while ($local = mysqli_fetch_assoc($result_locales)): ?>
                                 <option value="<?= $local['id_local']; ?>" <?= $local['id_local'] == $id_local ? 'selected' : ''; ?>>
                                     <?= $local['nombre_parque']; ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_dia">Días Disponibles (*):</label>
+                        <select name="id_dia[]" class="form-control" multiple required>
+                            <?php
+                            $sql_dias = "SELECT id_dia, dia FROM dias_disponibles";
+                            $result_dias = dbQuery($sql_dias);
+                            while ($dia = mysqli_fetch_assoc($result_dias)): ?>
+                                <option value="<?= $dia['id_dia']; ?>" <?= in_array($dia['id_dia'], $id_dia) ? 'selected' : ''; ?>>
+                                    <?= $dia['dia']; ?>
                                 </option>
                             <?php endwhile; ?>
                         </select>
