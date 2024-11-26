@@ -146,7 +146,7 @@ if (session_status() === PHP_SESSION_NONE) {
                             <a href="contratos_locales.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-cog nav-icon"></i><p>Contrato Locales</p>
                             </a>
-                        <a href="Horario.php" class="nav-link" style="color: white;">
+                        <a href="programacion_horarios.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-cog nav-icon"></i><p>Horario entrenamientos</p>
                             </a>
                         </li>
