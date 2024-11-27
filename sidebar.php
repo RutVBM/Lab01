@@ -87,7 +87,7 @@ if (session_status() === PHP_SESSION_NONE) {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="reporte_gestion.php" class="nav-link" style="color: white;">
+                            <a href="reporte_financiero.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-chart-line nav-icon"></i><p>Reportes de gestión</p>
                             </a>
                         </li>
@@ -182,7 +182,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                 <i class="fas fa-warehouse nav-icon"></i><p>Pago a proveedores</p>
                             </a>
                             <li class="nav-item">
-                            <a href="reportes.php" class="nav-link" style="color: white;">
+                            <a href="reporte_financiero.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-warehouse nav-icon"></i><p>Reportes</p>
                             </a>
                         </li>

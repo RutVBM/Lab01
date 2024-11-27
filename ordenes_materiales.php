@@ -2,8 +2,8 @@
 include("header.php");
 include_once("conexion/database.php");
 include("sidebar.php");
-?>
 
+?>
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -26,8 +26,8 @@ include("sidebar.php");
                         FROM ordenes_materiales om
                         INNER JOIN inventario i ON om.id_inventario = i.id_inventario";
                 $result = dbQuery($sql);
-                ?>
 
+                ?>
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -40,7 +40,7 @@ include("sidebar.php");
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)) : ?>
                             <tr>
                                 <td><?= $row["id_orden"] ?></td>
                                 <td><?= htmlspecialchars($row["nombre_material_producto"]) ?></td>
