@@ -29,7 +29,7 @@ function EditReclamo(id_reclamo) {
             <div class="card-body">
                 <?php
                 // Consulta SQL para obtener todos los campos de la tabla "reclamos"
-                $sql = "SELECT r.id_cliente, r.nombre, r.id_reclamo, r.tipo, r.detalle, r.fecha_reclamo, r.estado_reclamo, r.fecha_solucion, r.detalle_solucion
+                $sql = "SELECT r.id_reclamo, r.nombre, r.tipo, r.detalle, r.fecha_reclamo, r.estado_reclamo, r.fecha_solucion, r.detalle_solucion
                         FROM reclamos r
                         WHERE r.id_reclamo > 0";
 
@@ -46,7 +46,6 @@ function EditReclamo(id_reclamo) {
                 <table id="listado" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID Cliente</th>
                             <th>Nombre</th>
                             <th>Tipo</th>
                             <th>Detalle</th>
@@ -63,7 +62,6 @@ function EditReclamo(id_reclamo) {
                             while ($row = $stmt->fetch_assoc()) {
                                 ?>
                                 <tr>
-                                    <td><?= $row["id_cliente"] ?></td>
                                     <td><?= $row["nombre"] ?></td>
                                     <td><?= $row["tipo"] ?></td>
                                     <td><?= $row["detalle"] ?></td>
@@ -78,7 +76,7 @@ function EditReclamo(id_reclamo) {
                                 <?php
                             }
                         } else {
-                            echo "<tr><td colspan='9'>No existen reclamos registrados</td></tr>";
+                            echo "<tr><td colspan='8'>No existen reclamos registrados</td></tr>"; // Cambié el colspan a 8 porque ahora hay 8 columnas
                         }
                         ?>
                     </tbody>

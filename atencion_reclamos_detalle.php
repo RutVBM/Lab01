@@ -6,7 +6,7 @@ include_once("conexion/database.php");
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "edit";
 $sTitulo = "Modificar Reclamo";
 $id_reclamo = $_POST["id_reclamo"] ?? "";
-$id_cliente = $nombre = $tipo = $detalle = $fecha_reclamo = $estado_reclamo = $fecha_solucion = $detalle_solucion = "";
+$nombre = $tipo = $detalle = $fecha_reclamo = $estado_reclamo = $fecha_solucion = $detalle_solucion = "";
 
 // Cargar datos del reclamo a editar si se proporciona un `id_reclamo`
 if (isset($_GET["id_reclamo"])) {
@@ -15,7 +15,7 @@ if (isset($_GET["id_reclamo"])) {
     // Cargar datos del reclamo a editar
     $stmt = dbQuery("SELECT * FROM reclamos WHERE id_reclamo = ?", [$id_reclamo]);
     if ($stmt && $row = $stmt->fetch_assoc()) {
-        $id_cliente = $row["id_cliente"];
+        // El campo id_cliente ha sido eliminado de la variable
         $nombre = $row["nombre"];
         $tipo = $row["tipo"];
         $detalle = $row["detalle"];
@@ -68,11 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && $sAccion == "update") {
                     <input type="hidden" name="sAccion" value="update">
                     <input type="hidden" name="id_reclamo" value="<?= $id_reclamo ?>">
 
-                    <!-- Campos de solo lectura -->
-                    <div class="form-group">
-                        <label for="id_cliente">ID Cliente:</label>
-                        <input type="text" name="id_cliente" class="form-control-plaintext" value="<?= $id_cliente ?>" readonly>
-                    </div>
+                    <!-- Eliminamos el campo id_cliente completamente -->
+                    <!-- El campo id_cliente ya no se muestra ni se procesa -->
 
                     <div class="form-group">
                         <label for="nombre">Nombre:</label>
