@@ -149,6 +149,10 @@ if (session_status() === PHP_SESSION_NONE) {
                         <a href="programacion_horarios.php" class="nav-link" style="color: white;">
                                 <i class="fas fa-cog nav-icon"></i><p>Horario entrenamientos</p>
                             </a>
+                            </a>
+                        <a href="disponibilidad_horario.php" class="nav-link" style="color: white;">
+                                <i class="fas fa-cog nav-icon"></i><p>Disponibilidad de Recursos</p>
+                            </a>
                         </li>
                     </ul>
                 </li>

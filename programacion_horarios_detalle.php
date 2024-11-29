@@ -12,10 +12,8 @@ if ($sAccion == "new") {
     $id_programacion = "";
     $id_contrato = "";
     $id_dia = "";
-    $hora_inicio = "";
-    $hora_fin = "";
+    $id_hora = "";
     $estado = "Activo";
-    $lugar = "Instalaciones"; // Predeterminado
     $id_local = null;
 } elseif ($sAccion == "edit" && isset($_GET["id_programacion"])) {
     $sTitulo = "Editar Programación de Horario";
@@ -28,20 +26,21 @@ if ($sAccion == "new") {
     if ($row = $stmt->fetch_assoc()) {
         $id_contrato = $row["id_contrato"];
         $id_dia = $row["id_dia"];
-        $hora_inicio = $row["hora_inicio"];
-        $hora_fin = $row["hora_fin"];
+        $id_hora = $row["id_hora"];
         $estado = $row["estado"];
-        $lugar = $row["id_local"] ? "Aire libre" : "Instalaciones";
         $id_local = $row["id_local"];
     }
 }
 
-// Obtener datos de entrenadores, días y locales
+// Obtener datos de entrenadores, días, horas y locales
 $sql_entrenadores = "SELECT id_contrato, nombre_entrenador FROM contrato_personal WHERE estado = 'Activo'";
 $entrenadores_result = dbQuery($sql_entrenadores);
 
 $sql_dias = "SELECT id_dia, dia FROM dias_disponibles";
 $dias_result = dbQuery($sql_dias);
+
+$sql_horas = "SELECT id_hora, hora_inicio, hora_fin FROM horas";
+$horas_result = dbQuery($sql_horas);
 
 $sql_locales = "SELECT id_local, nombre_parque FROM locales";
 $locales_result = dbQuery($sql_locales);
@@ -50,21 +49,20 @@ $locales_result = dbQuery($sql_locales);
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id_contrato = $_POST["id_contrato"];
     $id_dia = $_POST["id_dia"];
-    $hora_inicio = $_POST["hora_inicio"];
-    $hora_fin = $_POST["hora_fin"];
+    $id_hora = $_POST["id_hora"]; // Nuevo campo
     $estado = $_POST["estado"];
-    $lugar = $_POST["lugar"];
-    $id_local = $lugar === "Aire libre" ? $_POST["id_local"] : null;
+    $id_local = $_POST["id_local"];
 
     if ($sAccion == "insert") {
-        $sql = "INSERT INTO horario_treno (id_contrato, id_dia, hora_inicio, hora_fin, estado, id_local) VALUES (?, ?, ?, ?, ?, ?)";
-        dbQuery($sql, [$id_contrato, $id_dia, $hora_inicio, $hora_fin, $estado, $id_local]);
+        $sql = "INSERT INTO horario_treno (id_contrato, id_dia, id_hora, estado, id_local) 
+                VALUES (?, ?, ?, ?, ?)";
+        dbQuery($sql, [$id_contrato, $id_dia, $id_hora, $estado, $id_local]);
     } elseif ($sAccion == "update") {
         $id_programacion = $_POST["id_programacion"];
         $sql = "UPDATE horario_treno 
-                SET id_contrato = ?, id_dia = ?, hora_inicio = ?, hora_fin = ?, estado = ?, id_local = ? 
+                SET id_contrato = ?, id_dia = ?, id_hora = ?, estado = ?, id_local = ? 
                 WHERE id_programacion = ?";
-        dbQuery($sql, [$id_contrato, $id_dia, $hora_inicio, $hora_fin, $estado, $id_local, $id_programacion]);
+        dbQuery($sql, [$id_contrato, $id_dia, $id_hora, $estado, $id_local, $id_programacion]);
     }
 
     header("Location: programacion_horarios.php?mensaje=success");
@@ -110,30 +108,12 @@ include("sidebar.php");
                     </div>
 
                     <div class="form-group">
-                        <label for="hora_inicio">Hora de Inicio:</label>
-                        <input type="time" name="hora_inicio" class="form-control" value="<?= $hora_inicio ?>" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="hora_fin">Hora de Fin:</label>
-                        <input type="time" name="hora_fin" class="form-control" value="<?= $hora_fin ?>" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lugar">Lugar:</label>
-                        <select name="lugar" id="lugar" class="form-control" onchange="toggleLocal()" required>
-                            <option value="Instalaciones" <?= $lugar === "Instalaciones" ? 'selected' : '' ?>>Instalaciones</option>
-                            <option value="Aire libre" <?= $lugar === "Aire libre" ? 'selected' : '' ?>>Aire libre</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" id="local_group" <?= $lugar === "Instalaciones" ? 'style="display:none;"' : '' ?>>
-                        <label for="id_local">Seleccione Local:</label>
-                        <select name="id_local" class="form-control">
-                            <option value="">Seleccione un local</option>
-                            <?php while ($local = $locales_result->fetch_assoc()): ?>
-                                <option value="<?= $local['id_local'] ?>" <?= $local['id_local'] == $id_local ? 'selected' : '' ?>>
-                                    <?= $local['nombre_parque'] ?>
+                        <label for="id_hora">Seleccionar Hora:</label>
+                        <select name="id_hora" class="form-control" required>
+                            <option value="">Seleccione una hora</option>
+                            <?php while ($hora = $horas_result->fetch_assoc()): ?>
+                                <option value="<?= $hora['id_hora'] ?>" <?= $hora['id_hora'] == $id_hora ? 'selected' : '' ?>>
+                                    <?= $hora['hora_inicio'] ?> - <?= $hora['hora_fin'] ?>
                                 </option>
                             <?php endwhile; ?>
                         </select>
@@ -147,24 +127,23 @@ include("sidebar.php");
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-success">Guardar</button>
-                    <a href="programacion_horarios.php" class="btn btn-secondary">Cancelar</a>
+                    <div class="form-group">
+                        <label for="id_local">Local:</label>
+                        <select name="id_local" class="form-control" required>
+                            <option value="">Seleccione un local</option>
+                            <?php while ($local = $locales_result->fetch_assoc()): ?>
+                                <option value="<?= $local['id_local'] ?>" <?= $local['id_local'] == $id_local ? 'selected' : '' ?>>
+                                    <?= $local['nombre_parque'] ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Guardar</button>
                 </form>
             </div>
         </div>
     </section>
 </div>
-
-<script>
-    function toggleLocal() {
-        var lugar = document.getElementById('lugar').value;
-        var localGroup = document.getElementById('local_group');
-        if (lugar === 'Aire libre') {
-            localGroup.style.display = 'block';
-        } else {
-            localGroup.style.display = 'none';
-        }
-    }
-</script>
 
 <?php include("footer.php"); ?>

@@ -22,10 +22,11 @@ include("sidebar.php");
         <div class="card">
             <div class="card-body">
                 <?php
-                $sql = "SELECT ht.id_programacion, cp.nombre_entrenador, d.dia, ht.hora_inicio, ht.hora_fin, ht.estado
+                $sql = "SELECT ht.id_programacion, cp.nombre_entrenador, d.dia, h.hora_inicio, h.hora_fin, ht.estado
                         FROM horario_treno ht
                         INNER JOIN contrato_personal cp ON ht.id_contrato = cp.id_contrato
-                        INNER JOIN dias_disponibles d ON ht.id_dia = d.id_dia";
+                        INNER JOIN dias_disponibles d ON ht.id_dia = d.id_dia
+                        INNER JOIN horas h ON ht.id_hora = h.id_hora";
                 $result = dbQuery($sql);
                 ?>
 
@@ -34,8 +35,7 @@ include("sidebar.php");
                         <tr>
                             <th>Entrenador</th>
                             <th>Día</th>
-                            <th>Hora Inicio</th>
-                            <th>Hora Fin</th>
+                            <th>Hora</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -45,8 +45,7 @@ include("sidebar.php");
                             <tr>
                                 <td><?= htmlspecialchars($row["nombre_entrenador"]) ?></td>
                                 <td><?= htmlspecialchars($row["dia"]) ?></td>
-                                <td><?= htmlspecialchars($row["hora_inicio"]) ?></td>
-                                <td><?= htmlspecialchars($row["hora_fin"]) ?></td>
+                                <td><?= htmlspecialchars($row["hora_inicio"]) ?> - <?= htmlspecialchars($row["hora_fin"]) ?></td>
                                 <td><?= htmlspecialchars($row["estado"]) ?></td>
                                 <td>
                                     <a href="programacion_horarios_detalle.php?sAccion=edit&id_programacion=<?= $row['id_programacion'] ?>" class="btn btn-info btn-sm">Editar</a>
