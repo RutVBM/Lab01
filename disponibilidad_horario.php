@@ -37,7 +37,7 @@ while ($row = $disponibilidad_result->fetch_assoc()) {
 
 <div class="content-wrapper">
     <section class="content-header">
-        <h1>Disponibilidad de Horarios en Locales</h1>
+        <h1>Programación de Horarios</h1>
     </section>
 
     <section class="content">
