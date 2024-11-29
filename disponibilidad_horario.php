@@ -1,4 +1,4 @@
-<?php
+<?php 
 include("header.php");
 include_once("conexion/database.php");
 include("sidebar.php");
@@ -19,23 +19,20 @@ while ($row = $horas_result->fetch_assoc()) {
     $horas[] = $row;
 }
 
-// Consultar la disponibilidad de horarios ocupados
+// Consultar la disponibilidad de horarios ocupados (ahora sin el comentario en la consulta SQL)
 $sql_disponibilidad = "
-    SELECT h.id_local, h.id_dia, h.id_hora, l.nombre_parque
+    SELECT h.id_dia, h.id_hora
     FROM horario_treno h
-    INNER JOIN locales l ON h.id_local = l.id_local
-    INNER JOIN horas hr ON h.id_hora = hr.id_hora
-    WHERE h.estado = 'Ocupado'
+    WHERE h.estado = 'Activo'
 ";
 $disponibilidad_result = dbQuery($sql_disponibilidad);
 
 // Crear un arreglo para almacenar la disponibilidad por días y horas
 $disponibilidad = [];
 while ($row = $disponibilidad_result->fetch_assoc()) {
-    $disponibilidad[$row['id_dia']][$row['id_hora']] = [
-        'nombre_parque' => $row['nombre_parque'],
-    ];
+    $disponibilidad[$row['id_dia']][$row['id_hora']] = true;  // Marcamos como activo
 }
+
 ?>
 
 <div class="content-wrapper">
@@ -60,7 +57,7 @@ while ($row = $disponibilidad_result->fetch_assoc()) {
                         <?php foreach ($dias as $dia): ?>
                             <td style="background-color: <?= isset($disponibilidad[$dia['id_dia']][$hora['id_hora']]) ? '#ffcccc' : '#ccffcc'; ?>;">
                                 <?php if (isset($disponibilidad[$dia['id_dia']][$hora['id_hora']])): ?>
-                                    <span>Reservado en <?= htmlspecialchars($disponibilidad[$dia['id_dia']][$hora['id_hora']]['nombre_parque']) ?></span>
+                                    <span>Ocupado</span>  <!-- Cambié 'Ocupado' por 'Activo' -->
                                 <?php else: ?>
                                     Disponible
                                 <?php endif; ?>
