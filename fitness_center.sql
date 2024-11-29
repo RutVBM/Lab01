@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2024 at 10:51 PM
+-- Generation Time: Nov 29, 2024 at 05:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -87,7 +87,6 @@ CREATE TABLE `cliente` (
 INSERT INTO `cliente` (`idcliente`, `tipopersona`, `nombre`, `tipodocumento`, `numdocumento`, `direccion`, `telefono`, `correo`, `estado`, `fechregistro`) VALUES
 (1, 'J', 'Dominique ', 'DNI', '73091158', 'Terre 187', '129845754', 'pollofrito@gmail.com', 'A', '2024-10-03'),
 (2, 'N', 'Rut', 'DNI', '71404985', 'Los Cayetanitos', '12345678', 'rut.benites@gmail.com', 'A', '2024-10-05'),
-(7, 'N', 'José Luis', 'DNI', '72345982', 'PUK', '12345678', 'jose.luis@gmail.com', 'A', '2024-10-26'),
 (8, 'N', 'Luis Ortega', 'DNI', '76043201', 'Las orquideas', '5387662', 'luis.ortega@gmail.com', 'A', '2024-11-06');
 
 -- --------------------------------------------------------
@@ -112,14 +111,10 @@ CREATE TABLE `compra_insumos` (
 --
 
 INSERT INTO `compra_insumos` (`id_compra`, `id_proveedor`, `nombre_insumo`, `cantidad`, `precio_unitario`, `fecha_pedido`, `fecha_recepcion`, `estado`) VALUES
-(6, 1, 'Bicicleta Estática', 10, 1200.50, '2024-10-01', '2024-10-29', 'Pendiente'),
-(7, 2, 'Caminadora Eléctrica', 5, 3200.00, '2024-09-25', '2024-10-10', 'Recibido'),
-(8, 3, 'Proteína Whey 1kg', 50, 150.00, '2024-09-28', NULL, 'Pendiente'),
+(8, 3, 'Proteína Whey 1kg', 10, 150.00, '2024-09-28', '0000-00-00', 'Pendiente'),
 (9, 4, 'Mancuernas 10kg', 20, 100.00, '2024-10-05', NULL, 'Pendiente'),
-(10, 3, 'Creatina 500g', 30, 80.00, '2024-09-30', '2024-10-08', 'Recibido'),
-(11, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente'),
-(12, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente'),
-(13, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente');
+(10, 3, 'Creatina 500g', 19, 80.00, '2024-09-30', '2024-10-08', 'Recibido'),
+(12, 4, 'Pesas', 22, 20.00, '2024-10-28', NULL, 'Pendiente');
 
 -- --------------------------------------------------------
 
@@ -128,29 +123,22 @@ INSERT INTO `compra_insumos` (`id_compra`, `id_proveedor`, `nombre_insumo`, `can
 --
 
 CREATE TABLE `contratos_locales` (
-  `idContratos_locales` int(11) NOT NULL,
-  `nombre_local` varchar(50) DEFAULT NULL,
-  `direccion` varchar(50) DEFAULT NULL,
-  `telefono_contacto` varchar(50) DEFAULT NULL,
-  `Finicio_contrato_local` date DEFAULT NULL,
-  `Ffin_contrato_local` date DEFAULT NULL
+  `id_contratacion_local` int(11) NOT NULL,
+  `id_local` int(50) DEFAULT NULL,
+  `id_dia` int(11) NOT NULL,
+  `hora_inicio` time DEFAULT NULL,
+  `hora_fin` time DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
 -- Dumping data for table `contratos_locales`
 --
 
-INSERT INTO `contratos_locales` (`idContratos_locales`, `nombre_local`, `direccion`, `telefono_contacto`, `Finicio_contrato_local`, `Ffin_contrato_local`) VALUES
-(101, 'Gimnasio Central', 'Av. Principal 123', '987654321', '2024-01-01', '2025-01-01'),
-(237, 'Fitness Club', 'Calle Secundaria 456', '912345678', '2024-02-15', '2025-02-15'),
-(289, 'Centro Funcional', 'Av. Vitalidad 707', '990123456', '2024-10-05', '2025-10-05'),
-(359, 'Centro Deportivo', 'Av. Los Deportes 789', '923456789', '2024-03-01', '2025-03-01'),
-(482, 'Wellness Center', 'Av. Bienestar 101', '934567890', '2024-04-10', '2025-04-10'),
-(519, 'Sala de Yoga', 'Calle Tranquila 202', '945678901', '2024-05-05', '2025-05-05'),
-(628, 'CrossFit Zone', 'Av. Fuerza 303', '956789012', '2024-06-20', '2025-06-20'),
-(749, 'Pilates Studio', 'Calle Armonía 404', '967890123', '2024-07-15', '2025-07-15'),
-(857, 'Club Natación', 'Av. Las Aguas 505', '978901234', '2024-08-01', '2025-08-01'),
-(963, 'Spa Relax', 'Calle Paz 606', '989012345', '2024-09-10', '2025-09-10');
+INSERT INTO `contratos_locales` (`id_contratacion_local`, `id_local`, `id_dia`, `hora_inicio`, `hora_fin`, `estado`) VALUES
+(1, 1, 0, '15:00:00', '21:00:00', 'Activo'),
+(101, 0, 0, '00:00:00', '00:00:00', ''),
+(102, 1, 3, '22:00:00', '23:00:00', 'Activo');
 
 -- --------------------------------------------------------
 
@@ -159,30 +147,81 @@ INSERT INTO `contratos_locales` (`idContratos_locales`, `nombre_local`, `direcci
 --
 
 CREATE TABLE `contrato_personal` (
-  `idContratos_personal` int(11) NOT NULL,
-  `nombre_personal` varchar(50) DEFAULT NULL,
-  `DNI_personal` varchar(50) DEFAULT NULL,
-  `telefono` varchar(50) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `Finicio_contrato_per` date DEFAULT NULL,
-  `Ffin_contrato_per` date DEFAULT NULL
+  `id_contrato` int(11) NOT NULL,
+  `nombre_entrenador` varchar(100) DEFAULT NULL,
+  `telefono` int(11) DEFAULT NULL,
+  `salario` decimal(10,0) DEFAULT NULL,
+  `estado` enum('Activo','Inactivo') DEFAULT NULL,
+  `dias_disponibles` varchar(255) NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  `tipo_entrenamiento` enum('Grupal','Individual') NOT NULL,
+  `capacidad` int(11) NOT NULL,
+  `especialidad` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
 -- Dumping data for table `contrato_personal`
 --
 
-INSERT INTO `contrato_personal` (`idContratos_personal`, `nombre_personal`, `DNI_personal`, `telefono`, `email`, `Finicio_contrato_per`, `Ffin_contrato_per`) VALUES
-(101, 'Laura Martínez', '45678901', '987654324', 'lauramartinez@example.com', '2024-04-01', '2025-04-01'),
-(123, 'Juan Pérez', '12345678', '987654321', 'juanperez@example.com', '2024-01-01', '2025-01-01'),
-(202, 'Pedro Sánchez', '56789012', '987654325', 'pedrosanchez@example.com', '2024-05-01', '2025-05-01'),
-(303, 'Ana Gómez', '67890123', '987654326', 'anagomez@example.com', '2024-06-01', '2025-06-01'),
-(404, 'Javier Ruiz', '78901234', '987654327', 'javierruiz@example.com', '2024-07-01', '2025-07-01'),
-(456, 'María López', '23456789', '987654322', 'marialopez@example.com', '2024-02-01', '2025-02-01'),
-(505, 'Elena Fernández', '89012345', '987654328', 'elenafdez@example.com', '2024-08-01', '2025-08-01'),
-(606, 'David Rodríguez', '90123456', '987654329', 'davidrodriguez@example.com', '2024-09-01', '2025-09-01'),
-(707, 'Sara Martínez', '01234567', '987654330', 'saramartinez@example.com', '2024-10-01', '2025-10-01'),
-(789, 'Carlos García', '34567890', '987654323', 'carlosgarcia@example.com', '2024-03-01', '2025-03-01');
+INSERT INTO `contrato_personal` (`id_contrato`, `nombre_entrenador`, `telefono`, `salario`, `estado`, `dias_disponibles`, `hora_inicio`, `hora_fin`, `tipo_entrenamiento`, `capacidad`, `especialidad`) VALUES
+(709, 'Mario Vargas', 12345678, 80, 'Activo', '2', '14:00:00', '16:00:00', 'Grupal', 4, 'Yoga'),
+(710, 'Stefany Catro', 458330112, 100, 'Activo', '4,5', '14:00:00', '18:00:00', 'Individual', 1, 'Baile'),
+(711, 'Rut Benites', 4066176, 96, 'Activo', '1', '19:11:00', '20:24:00', 'Grupal', 10, 'Yoga');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dias_disponibles`
+--
+
+CREATE TABLE `dias_disponibles` (
+  `id_dia` int(11) NOT NULL,
+  `dia` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dias_disponibles`
+--
+
+INSERT INTO `dias_disponibles` (`id_dia`, `dia`) VALUES
+(1, 'Lunes'),
+(2, 'Martes'),
+(3, 'Miercoles'),
+(4, 'Jueves'),
+(5, 'Viernes'),
+(6, 'Sabado'),
+(7, 'Domingo');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `entrenadores`
+--
+
+CREATE TABLE `entrenadores` (
+  `id_entrenador` int(11) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `especialidad` varchar(255) NOT NULL,
+  `max_personas` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `entrenador_dias_horarios`
+--
+
+CREATE TABLE `entrenador_dias_horarios` (
+  `id_disponibilidad` int(11) NOT NULL,
+  `id_entrenador` int(11) NOT NULL,
+  `id_dia` int(11) NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL,
+  `lugar` varchar(50) NOT NULL,
+  `tipo_entrenamiento` enum('Individual','Grupal') NOT NULL,
+  `capacidad` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -209,6 +248,58 @@ INSERT INTO `gestion_sanciones` (`idcliente`, `id_sancion`, `nombre_cliente`, `f
 (1, 12, 'Rut', 3, '', '2024-11-07 05:00:00'),
 (2, 13, 'Fred Pastor', 1, '', '2024-11-07 05:00:00'),
 (2, 14, 'Fred Pastor', 1, '', '2024-11-07 05:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `horario_treno`
+--
+
+CREATE TABLE `horario_treno` (
+  `id_programacion` int(11) NOT NULL,
+  `id_contrato` int(11) NOT NULL,
+  `id_dia` int(11) NOT NULL,
+  `id_hora` int(11) NOT NULL,
+  `estado` enum('Activo','Inactivo') NOT NULL,
+  `id_local` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `horario_treno`
+--
+
+INSERT INTO `horario_treno` (`id_programacion`, `id_contrato`, `id_dia`, `id_hora`, `estado`, `id_local`) VALUES
+(8, 710, 4, 2, 'Activo', 1),
+(9, 711, 6, 6, 'Activo', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `horas`
+--
+
+CREATE TABLE `horas` (
+  `id_hora` int(11) NOT NULL,
+  `hora_inicio` time NOT NULL,
+  `hora_fin` time NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `horas`
+--
+
+INSERT INTO `horas` (`id_hora`, `hora_inicio`, `hora_fin`) VALUES
+(1, '07:00:00', '08:00:00'),
+(2, '08:30:00', '09:30:00'),
+(3, '10:00:00', '11:00:00'),
+(4, '11:30:00', '12:30:00'),
+(5, '13:00:00', '14:00:00'),
+(6, '14:30:00', '15:30:00'),
+(7, '16:00:00', '17:00:00'),
+(8, '17:30:00', '18:30:00'),
+(9, '19:00:00', '20:00:00'),
+(10, '20:30:00', '21:30:00'),
+(11, '22:00:00', '23:00:00');
 
 -- --------------------------------------------------------
 
@@ -244,6 +335,44 @@ INSERT INTO `inventario` (`id_inventario`, `nombre_material_producto`, `tipo`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `locales`
+--
+
+CREATE TABLE `locales` (
+  `id_local` int(11) NOT NULL,
+  `nombre_parque` varchar(255) NOT NULL,
+  `direccion` varchar(255) NOT NULL,
+  `capacidad` int(11) NOT NULL,
+  `descripcion` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `locales`
+--
+
+INSERT INTO `locales` (`id_local`, `nombre_parque`, `direccion`, `capacidad`, `descripcion`) VALUES
+(1, 'Parque Miraflores', 'Av. Las Flores 123, Miraflores', 10, 'Entrenamiento funcional y cardio.'),
+(2, 'Parque del Sol', 'Avenida Primavera 123, Miraflores', 10, 'Un parque amplio con zonas para ejercicio al aire libre.'),
+(3, 'Parque Los Cedros', 'Jirón Los Cedros 123, Lince', 1, 'Un lugar tranquilo para meditación y entrenamientos ligeros.');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ordenes_materiales`
+--
+
+CREATE TABLE `ordenes_materiales` (
+  `id_orden` int(11) NOT NULL,
+  `id_inventario` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `subtotal` int(11) NOT NULL,
+  `estado` varchar(255) NOT NULL,
+  `fecha` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pago_clientes`
 --
 
@@ -265,7 +394,26 @@ CREATE TABLE `pago_clientes` (
 INSERT INTO `pago_clientes` (`id_pago`, `tipo_plan`, `nombre_plan`, `duracion`, `precio`, `metodo_pago`, `fecha_pago`, `idusuario`) VALUES
 (7, 'Individual', 'Bailes', 12, 590, 'Tarjeta', '2024-11-23', 2),
 (8, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-23', 2),
-(9, 'Individual', 'Aeróbicos', 10, 100, 'Tarjeta', '2024-11-23', 2);
+(9, 'Individual', 'Aeróbicos', 10, 100, 'Tarjeta', '2024-11-23', 2),
+(10, 'Individual', 'Aeróbicos', 10, 100, 'Tarjeta', '2024-11-26', 2),
+(11, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(12, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(13, 'Grupal', 'Rut-Ina', 20, 85, 'Efectivo', '2024-11-26', 2),
+(14, 'Individual', 'Aeróbicos', 10, 100, 'Tarjeta', '2024-11-26', 2),
+(15, 'Grupal', 'Fight Do', 1, 200, 'Efectivo', '2024-11-26', 2),
+(16, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(17, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(18, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(19, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(20, 'Individual', 'Aeróbicos', 10, 100, 'Efectivo', '2024-11-26', 2),
+(21, 'Grupal', 'Fight Do', 1, 200, 'Efectivo', '2024-11-26', 2),
+(22, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(23, 'Grupal', 'Rut-Ina', 20, 200, 'Efectivo', '2024-11-26', 2),
+(24, 'Individual', 'Aeróbicos', 10, 100, 'Efectivo', '2024-11-26', 2),
+(25, 'Individual', 'Bailes', 12, 590, 'Efectivo', '2024-11-26', 2),
+(26, 'Individual', 'Gym', 5, 400, 'Efectivo', '2024-11-26', 2),
+(27, 'Grupal', 'Fight Do', 1, 200, 'Efectivo', '2024-11-26', 2),
+(28, 'Individual', 'Aeróbicos', 10, 100, 'Efectivo', '2024-11-28', 2);
 
 -- --------------------------------------------------------
 
@@ -290,10 +438,11 @@ CREATE TABLE `planes_entrenamiento` (
 --
 
 INSERT INTO `planes_entrenamiento` (`idplan`, `tipo_plan`, `nombre_plan`, `duracion`, `precio`, `estado`, `fecharegistro`, `idcliente`, `metodo_pago`) VALUES
-(5, 'Grupal', 'Rut-Ina', 20, 85, 'A', '2024-10-25 00:00:00', 0, 'Pago Efectivo'),
+(5, 'Grupal', 'Rut-Ina', 20, 200, 'A', '2024-10-25 00:00:00', 0, 'Pago Efectivo'),
 (6, 'Individual', 'Aeróbicos', 10, 100, 'A', '2024-11-06 00:00:00', 0, 'Pago Efectivo'),
 (8, 'Individual', 'Bailes', 12, 590, 'A', '2024-11-09 00:00:00', 0, 'Pago Efectivo'),
-(9, 'Individual', 'Gym', 5, 100, 'A', '2024-11-23 00:00:00', 0, 'Pago Efectivo');
+(9, 'Individual', 'Gym', 5, 400, 'A', '2024-11-23 00:00:00', 0, 'Pago Efectivo'),
+(10, 'Grupal', 'Fight Do', 1, 200, 'A', '2024-11-26 00:00:00', 0, 'Pago Efectivo');
 
 -- --------------------------------------------------------
 
@@ -388,7 +537,6 @@ CREATE TABLE `reserva_entrenamientos` (
 --
 
 INSERT INTO `reserva_entrenamientos` (`idreserva`, `idcliente`, `nombre_cliente`, `fecha_reserva`, `tipo_entrenamiento`, `num_participantes`, `lugar_entrenamiento`) VALUES
-(13, 'rut.benites@gmail.com', 'Rut ', '2024-11-09', 'Individual', 1, 'Instalaciones'),
 (14, 'rut.benites@gmail.com', 'Rut Benites', '2024-11-12', 'Individual', 1, 'Instalaciones');
 
 -- --------------------------------------------------------
@@ -453,13 +601,31 @@ ALTER TABLE `compra_insumos`
 -- Indexes for table `contratos_locales`
 --
 ALTER TABLE `contratos_locales`
-  ADD PRIMARY KEY (`idContratos_locales`);
+  ADD PRIMARY KEY (`id_contratacion_local`);
 
 --
 -- Indexes for table `contrato_personal`
 --
 ALTER TABLE `contrato_personal`
-  ADD PRIMARY KEY (`idContratos_personal`);
+  ADD PRIMARY KEY (`id_contrato`);
+
+--
+-- Indexes for table `dias_disponibles`
+--
+ALTER TABLE `dias_disponibles`
+  ADD PRIMARY KEY (`id_dia`);
+
+--
+-- Indexes for table `entrenadores`
+--
+ALTER TABLE `entrenadores`
+  ADD PRIMARY KEY (`id_entrenador`);
+
+--
+-- Indexes for table `entrenador_dias_horarios`
+--
+ALTER TABLE `entrenador_dias_horarios`
+  ADD PRIMARY KEY (`id_disponibilidad`);
 
 --
 -- Indexes for table `gestion_sanciones`
@@ -469,11 +635,35 @@ ALTER TABLE `gestion_sanciones`
   ADD KEY `idcliente` (`idcliente`);
 
 --
+-- Indexes for table `horario_treno`
+--
+ALTER TABLE `horario_treno`
+  ADD PRIMARY KEY (`id_programacion`);
+
+--
+-- Indexes for table `horas`
+--
+ALTER TABLE `horas`
+  ADD PRIMARY KEY (`id_hora`);
+
+--
 -- Indexes for table `inventario`
 --
 ALTER TABLE `inventario`
   ADD PRIMARY KEY (`id_inventario`),
   ADD KEY `id_proveedor` (`id_proveedor`);
+
+--
+-- Indexes for table `locales`
+--
+ALTER TABLE `locales`
+  ADD PRIMARY KEY (`id_local`);
+
+--
+-- Indexes for table `ordenes_materiales`
+--
+ALTER TABLE `ordenes_materiales`
+  ADD PRIMARY KEY (`id_orden`);
 
 --
 -- Indexes for table `pago_clientes`
@@ -551,10 +741,40 @@ ALTER TABLE `compra_insumos`
   MODIFY `id_compra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
+-- AUTO_INCREMENT for table `contratos_locales`
+--
+ALTER TABLE `contratos_locales`
+  MODIFY `id_contratacion_local` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+
+--
+-- AUTO_INCREMENT for table `contrato_personal`
+--
+ALTER TABLE `contrato_personal`
+  MODIFY `id_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=712;
+
+--
+-- AUTO_INCREMENT for table `entrenador_dias_horarios`
+--
+ALTER TABLE `entrenador_dias_horarios`
+  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `gestion_sanciones`
 --
 ALTER TABLE `gestion_sanciones`
   MODIFY `id_sancion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `horario_treno`
+--
+ALTER TABLE `horario_treno`
+  MODIFY `id_programacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `horas`
+--
+ALTER TABLE `horas`
+  MODIFY `id_hora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `inventario`
@@ -563,16 +783,28 @@ ALTER TABLE `inventario`
   MODIFY `id_inventario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `locales`
+--
+ALTER TABLE `locales`
+  MODIFY `id_local` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `ordenes_materiales`
+--
+ALTER TABLE `ordenes_materiales`
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `pago_clientes`
 --
 ALTER TABLE `pago_clientes`
-  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `planes_entrenamiento`
 --
 ALTER TABLE `planes_entrenamiento`
-  MODIFY `idplan` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idplan` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `proveedor`
