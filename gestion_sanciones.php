@@ -4,9 +4,11 @@ include("header.php");
 include_once("conexion/database.php");
 include("sidebar.php");
 
-// Consulta para obtener las reservas junto con los campos sancion y cant_sancion
-$sql_reservas = "SELECT id_reserva, fecha_reserva, tipo_reserva, cantidad, sancion, cant_sancion
-                 FROM reserva";
+// Consulta para obtener las reservas junto con el usuario
+$sql_reservas = "SELECT r.id_reserva, r.fecha_reserva, r.tipo_reserva, r.cantidad, r.sancion, r.cant_sancion,
+                 u.nombre, u.apellidos
+                 FROM reserva r
+                 INNER JOIN usuario u ON r.id_usuario = u.idusuario";
 $reservas = dbQuery($sql_reservas);
 ?>
 
@@ -20,6 +22,7 @@ $reservas = dbQuery($sql_reservas);
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
+                            <th>Cliente</th>
                             <th># Reserva</th>
                             <th>Fecha de Reserva</th>
                             <th>Tipo de Reserva</th>
@@ -32,14 +35,15 @@ $reservas = dbQuery($sql_reservas);
                     <tbody>
                         <?php while ($reserva = $reservas->fetch_assoc()): ?>
                             <tr>
+                                <td><?= htmlspecialchars($reserva['nombre'] . ' ' . $reserva['apellidos']) ?></td>
                                 <td><?= htmlspecialchars($reserva['id_reserva']) ?></td>
                                 <td><?= htmlspecialchars($reserva['fecha_reserva']) ?></td>
                                 <td><?= htmlspecialchars($reserva['tipo_reserva']) ?></td>
                                 <td><?= $reserva['tipo_reserva'] == 'Grupal' ? htmlspecialchars($reserva['cantidad']) : '1' ?></td>
-                                <td><?= htmlspecialchars($reserva['sancion'] ?? 'N/A') ?></td>  <!-- Manejamos que puede ser NULL -->
-                                <td><?= htmlspecialchars($reserva['cant_sancion'] ?? '0') ?></td>  <!-- Manejamos que puede ser NULL -->
+                                <td><?= htmlspecialchars($reserva['sancion'] ?? 'N/A') ?></td>
+                                <td><?= htmlspecialchars($reserva['cant_sancion'] ?? '0') ?></td>
                                 <td>
-                                    <a href="gestion_sanciones_detalle.php?id_reserva=<?= $reserva['id_reserva'] ?>" class="btn btn-info btn-sm">Detalles</a>
+                                    <a href="gestion_sanciones_detalle.php?id_reserva=<?= $reserva['id_reserva'] ?>" class="btn btn-info btn-sm">Ver Detalles</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>

@@ -11,9 +11,12 @@ if (empty($id_reserva)) {
     exit();
 }
 
-// Obtener los datos de la reserva y sanción correspondiente
-$sql_reserva = "SELECT id_reserva, fecha_reserva, tipo_reserva, cantidad, sancion, cant_sancion 
-                FROM reserva WHERE id_reserva = ?";
+// Obtener los datos de la reserva y del usuario
+$sql_reserva = "SELECT r.id_reserva, r.fecha_reserva, r.tipo_reserva, r.cantidad, r.sancion, r.cant_sancion,
+                u.nombre, u.apellidos
+                FROM reserva r
+                INNER JOIN usuario u ON r.id_usuario = u.idusuario
+                WHERE r.id_reserva = ?";
 $stmt_reserva = dbQuery($sql_reserva, [$id_reserva]);
 $reserva = $stmt_reserva->fetch_assoc();
 
@@ -50,6 +53,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="card">
             <div class="card-body">
                 <form action="gestion_sanciones_detalle.php?id_reserva=<?= $id_reserva ?>" method="post">
+                    <!-- Mostrar el nombre y apellidos del usuario -->
+                    <div class="form-group">
+                        <label for="usuario">Cliente:</label>
+                        <input type="text" class="form-control" id="usuario" value="<?= htmlspecialchars($reserva['nombre'] . ' ' . $reserva['apellidos']) ?>" readonly>
+                    </div>
+
                     <div class="form-group">
                         <label for="id_reserva">Número de Reserva:</label>
                         <input type="text" class="form-control" id="id_reserva" value="<?= htmlspecialchars($reserva['id_reserva']) ?>" readonly>
