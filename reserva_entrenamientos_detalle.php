@@ -1,9 +1,19 @@
 <?php
+session_start(); // Aseguramos que la sesión esté iniciada
 include("header.php");
 include_once("conexion/database.php");
 
 $sAccion = $_GET["sAccion"] ?? $_POST["sAccion"] ?? "";
 $id_reserva = $_GET["id_reserva"] ?? "";
+
+// Verificamos si el usuario está logueado y obtenemos su id
+$id_usuario = $_SESSION["IDUSUARIO"] ?? 0; // Obtener el ID del usuario desde la sesión
+
+if ($id_usuario == 0) {
+    echo '<script>alert("Debes iniciar sesión para realizar una reserva.");</script>';
+    header("Location: login.php"); // Redirigir al login si el usuario no está logueado
+    exit();
+}
 
 // Configuración de la acción
 if ($sAccion == "edit" && !empty($id_reserva)) {
@@ -37,15 +47,16 @@ $programaciones = dbQuery($sql_programaciones);
 // Procesar el formulario
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id_programacion = $_POST["id_programacion"];
-    $id_usuario = 1;  // Reemplaza con el ID del usuario actual
     $fecha_reserva = date("Y-m-d H:i:s");
     $tipo_reserva = $_POST["tipo_reserva"];
     $cantidad = $_POST["cantidad"];
 
     if ($sAccion == "insert") {
+        // Insertar nueva reserva con el id_usuario
         $sql_insert = "INSERT INTO reserva (id_programacion, id_usuario, fecha_reserva, tipo_reserva, cantidad) VALUES (?, ?, ?, ?, ?)";
         dbQuery($sql_insert, [$id_programacion, $id_usuario, $fecha_reserva, $tipo_reserva, $cantidad]);
     } elseif ($sAccion == "update") {
+        // Actualizar reserva existente
         $sql_update = "UPDATE reserva SET id_programacion = ?, tipo_reserva = ?, cantidad = ? WHERE id_reserva = ?";
         dbQuery($sql_update, [$id_programacion, $tipo_reserva, $cantidad, $id_reserva]);
     }
