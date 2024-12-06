@@ -33,6 +33,9 @@ $reservas = dbQuery($sql);
                             <th>Fecha de Reserva</th>
                             <th>Tipo de Reserva</th>
                             <th>Cantidad</th>
+                            <!-- Eliminamos las dos últimas columnas -->
+                            <!-- <th>Cant. Sanción</th> -->
+                            <!-- <th>Sanción</th> -->
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -46,7 +49,10 @@ $reservas = dbQuery($sql);
                                 <td><?= htmlspecialchars($reserva['nombre_parque']) ?></td>
                                 <td><?= htmlspecialchars($reserva['fecha_reserva']) ?></td>
                                 <td><?= htmlspecialchars($reserva['tipo_reserva']) ?></td>
-                                <td><?= htmlspecialchars($reserva['cantidad']) ?></td>
+                                <td><?= $reserva['tipo_reserva'] == 'Grupal' ? htmlspecialchars($reserva['cantidad']) : '1' ?></td>
+                                <!-- Eliminamos las celdas de sanción -->
+                                <!-- <td><?= htmlspecialchars($reserva['cant_sancion']) ?></td> -->
+                                <!-- <td><?= htmlspecialchars($reserva['sancion']) ?></td> -->
                                 <td>
                                     <a href="reserva_entrenamientos_detalle.php?sAccion=edit&id_reserva=<?= $reserva['id_reserva'] ?>" class="btn btn-info btn-sm">Editar</a>
                                 </td>
