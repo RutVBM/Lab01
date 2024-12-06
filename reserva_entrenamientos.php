@@ -3,7 +3,7 @@ include("header.php");
 include_once("conexion/database.php");
 include("sidebar.php");
 
-// Obtener todas las reservas con información de programación
+// Obtener todas las reservas junto con la información de la programación
 $sql = "SELECT r.id_reserva, r.fecha_reserva, r.tipo_reserva, r.cantidad, ht.id_programacion, cp.nombre_entrenador, d.dia, h.hora_inicio, h.hora_fin, lp.nombre_parque
         FROM reserva r
         INNER JOIN horario_treno ht ON r.id_programacion = ht.id_programacion
@@ -16,34 +16,39 @@ $reservas = dbQuery($sql);
 
 <div class="content-wrapper">
     <section class="content-header">
-        <h1>Reservas de Entrenamiento</h1>
+        <h1>Lista de Reservas</h1>
     </section>
     <section class="content">
         <div class="card">
             <div class="card-body">
-                <table id="listado" class="table table-bordered table-striped">
+                <a href="reserva_entrenamientos_detalle.php?sAccion=new" class="btn btn-primary mb-3">Nueva Reserva</a>
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
+                            <th># Reserva</th>
                             <th>Entrenador</th>
                             <th>Día</th>
                             <th>Hora</th>
                             <th>Local</th>
+                            <th>Fecha de Reserva</th>
                             <th>Tipo de Reserva</th>
                             <th>Cantidad</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = mysqli_fetch_assoc($reservas)): ?>
+                        <?php while ($reserva = $reservas->fetch_assoc()): ?>
                             <tr>
-                                <td><?= htmlspecialchars($row["nombre_entrenador"]) ?></td>
-                                <td><?= htmlspecialchars($row["dia"]) ?></td>
-                                <td><?= htmlspecialchars($row["hora_inicio"]) ?> - <?= htmlspecialchars($row["hora_fin"]) ?></td>
-                                <td><?= htmlspecialchars($row["nombre_parque"]) ?></td>
-                                <td><?= htmlspecialchars($row["tipo_reserva"]) ?></td>
-                                <td><?= $row["tipo_reserva"] == "Grupal" ? $row["cantidad"] : "1" ?></td>
+                                <td><?= $reserva['id_reserva'] ?></td>
+                                <td><?= htmlspecialchars($reserva['nombre_entrenador']) ?></td>
+                                <td><?= htmlspecialchars($reserva['dia']) ?></td>
+                                <td><?= htmlspecialchars($reserva['hora_inicio']) ?> - <?= htmlspecialchars($reserva['hora_fin']) ?></td>
+                                <td><?= htmlspecialchars($reserva['nombre_parque']) ?></td>
+                                <td><?= htmlspecialchars($reserva['fecha_reserva']) ?></td>
+                                <td><?= htmlspecialchars($reserva['tipo_reserva']) ?></td>
+                                <td><?= htmlspecialchars($reserva['cantidad']) ?></td>
                                 <td>
-                                    <a href="reserva_entrenamientos_detalle.php?sAccion=edit&id_reserva=<?= $row['id_reserva'] ?>" class="btn btn-info btn-sm">Editar</a>
+                                    <a href="reserva_entrenamientos_detalle.php?sAccion=edit&id_reserva=<?= $reserva['id_reserva'] ?>" class="btn btn-info btn-sm">Editar</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
