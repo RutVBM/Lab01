@@ -1,50 +1,40 @@
 <?php
+session_start(); // Aseguramos que la sesión esté iniciada
 include("header.php");
 include_once("conexion/database.php");
 include("sidebar.php");
 
-// Obtener las sanciones de los clientes
-$sql = "SELECT s.id_sancion, s.id_reserva, s.hay_sancion, s.cant_sancion, s.fecha_sancion, r.id_usuario, r.fecha_reserva, r.tipo_reserva
-        FROM sancion s
-        INNER JOIN reserva r ON s.id_reserva = r.id_reserva";
-$sanciones = dbQuery($sql);
+// Consulta para obtener la cantidad de sanciones por cliente
+$sql_sanciones_cliente = "SELECT u.idusuario, u.nombre, u.apellidos, COUNT(r.id_reserva) AS total_sanciones
+                          FROM reserva r
+                          INNER JOIN usuario u ON r.id_usuario = u.idusuario
+                          WHERE r.sancion = 'Sí'
+                          GROUP BY u.idusuario";
+$sanciones_cliente = dbQuery($sql_sanciones_cliente);
 ?>
 
 <div class="content-wrapper">
     <section class="content-header">
-        <h1>Lista de Sanciones de Clientes</h1>
+        <h1>Reporte de Sanciones por Cliente</h1>
     </section>
     <section class="content">
         <div class="card">
             <div class="card-body">
-                <a href="sancion_cliente_detalle.php?sAccion=new" class="btn btn-primary mb-3">Nueva Sanción</a>
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th># Sanción</th>
-                            <th>ID Reserva</th>
                             <th>Cliente</th>
-                            <th>Fecha Reserva</th>
-                            <th>Tipo de Reserva</th>
-                            <th>Hay Sanción</th>
-                            <th>Cant. Sanción</th>
-                            <th>Fecha de Sanción</th>
+                            <th>Total de Sanciones</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($sancion = $sanciones->fetch_assoc()): ?>
+                        <?php while ($sancion = $sanciones_cliente->fetch_assoc()): ?>
                             <tr>
-                                <td><?= $sancion['id_sancion'] ?></td>
-                                <td><?= $sancion['id_reserva'] ?></td>
-                                <td><?= htmlspecialchars($sancion['id_usuario']) ?></td>
-                                <td><?= htmlspecialchars($sancion['fecha_reserva']) ?></td>
-                                <td><?= htmlspecialchars($sancion['tipo_reserva']) ?></td>
-                                <td><?= $sancion['hay_sancion'] ? 'Sí' : 'No' ?></td>
-                                <td><?= $sancion['cant_sancion'] ?></td>
-                                <td><?= htmlspecialchars($sancion['fecha_sancion']) ?></td>
+                                <td><?= htmlspecialchars($sancion['nombre'] . ' ' . $sancion['apellidos']) ?></td>
+                                <td><?= htmlspecialchars($sancion['total_sanciones']) ?></td>
                                 <td>
-                                    <a href="sancion_cliente_detalle.php?sAccion=edit&id_sancion=<?= $sancion['id_sancion'] ?>" class="btn btn-info btn-sm">Editar</a>
+                                    <a href="sancion_cliente_detalle.php?id_usuario=<?= $sancion['idusuario'] ?>" class="btn btn-info btn-sm">Ver Detalles</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
