@@ -27,6 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sancion = $_POST["sancion"];
     $cant_sancion = $_POST["cant_sancion"];
 
+    // Si la sanción es "No", se pone la cantidad_sancion en 0
+    if ($sancion == "No") {
+        $cant_sancion = 0;
+    }
+
     // Actualizar la sanción en la base de datos
     $sql_update = "UPDATE reserva SET sancion = ?, cant_sancion = ? WHERE id_reserva = ?";
     dbQuery($sql_update, [$sancion, $cant_sancion, $id_reserva]);
@@ -46,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="card-body">
                 <form action="gestion_sanciones_detalle.php?id_reserva=<?= $id_reserva ?>" method="post">
                     <div class="form-group">
-                        <label for="id_reserva">ID Reserva:</label>
+                        <label for="id_reserva">Número de Reserva:</label>
                         <input type="text" class="form-control" id="id_reserva" value="<?= htmlspecialchars($reserva['id_reserva']) ?>" readonly>
                     </div>
 
@@ -65,12 +70,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <input type="number" class="form-control" id="cantidad" value="<?= htmlspecialchars($reserva['cantidad']) ?>" readonly>
                     </div>
 
+                    <!-- Campo de selección de Sanción -->
                     <div class="form-group">
-                        <label for="sancion">Sanción:</label>
-                        <input type="text" class="form-control" id="sancion" name="sancion" value="<?= htmlspecialchars($reserva['sancion'] ?? '') ?>" required>
+                        <label for="sancion">¿Aplicar Sanción?</label>
+                        <select class="form-control" id="sancion" name="sancion" onchange="toggleCantidadSancion()" required>
+                            <option value="Sí" <?= $reserva['sancion'] == 'Sí' ? 'selected' : '' ?>>Sí</option>
+                            <option value="No" <?= $reserva['sancion'] == 'No' ? 'selected' : '' ?>>No</option>
+                        </select>
                     </div>
 
-                    <div class="form-group">
+                    <!-- Campo de cantidad de sanción, solo visible si la sanción es "Sí" -->
+                    <div class="form-group" id="cantidad_sancion_field" style="<?= $reserva['sancion'] == 'Sí' ? '' : 'display:none;' ?>">
                         <label for="cant_sancion">Cantidad de Sanción:</label>
                         <input type="number" class="form-control" id="cant_sancion" name="cant_sancion" value="<?= htmlspecialchars($reserva['cant_sancion'] ?? '0') ?>" required>
                     </div>
@@ -83,3 +93,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 
 <?php include("footer.php"); ?>
+
+<script>
+// Función para mostrar/ocultar el campo de cantidad de sanción
+function toggleCantidadSancion() {
+    const sancion = document.getElementById('sancion').value;
+    const cantidadSancionField = document.getElementById('cantidad_sancion_field');
+    if (sancion === 'Sí') {
+        cantidadSancionField.style.display = 'block'; // Muestra el campo
+    } else {
+        cantidadSancionField.style.display = 'none'; // Oculta el campo
+        document.getElementById('cant_sancion').value = 0; // Restaura la cantidad de sanción a 0 si no se aplica sanción
+    }
+}
+
+// Llamamos a la función al cargar la página para inicializar el estado del campo
+document.addEventListener("DOMContentLoaded", toggleCantidadSancion);
+</script>

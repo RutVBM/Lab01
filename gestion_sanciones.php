@@ -39,7 +39,7 @@ $reservas = dbQuery($sql_reservas);
                                 <td><?= htmlspecialchars($reserva['sancion'] ?? 'N/A') ?></td>  <!-- Manejamos que puede ser NULL -->
                                 <td><?= htmlspecialchars($reserva['cant_sancion'] ?? '0') ?></td>  <!-- Manejamos que puede ser NULL -->
                                 <td>
-                                    <a href="gestion_sanciones_detalle.php?id_reserva=<?= $reserva['id_reserva'] ?>" class="btn btn-info btn-sm">Ver Detalles</a>
+                                    <a href="gestion_sanciones_detalle.php?id_reserva=<?= $reserva['id_reserva'] ?>" class="btn btn-info btn-sm">Detalles</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
