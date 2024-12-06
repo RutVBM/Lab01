@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2024 at 05:31 AM
+-- Generation Time: Dec 06, 2024 at 10:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,21 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `fitness_center`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `atencion_reclamos`
---
-
-CREATE TABLE `atencion_reclamos` (
-  `idreclamo` int(11) NOT NULL,
-  `idcliente` int(11) NOT NULL,
-  `nombre_cliente` varchar(255) NOT NULL,
-  `descripcion` text NOT NULL,
-  `estado` enum('Pendiente','Resuelto','','') NOT NULL DEFAULT 'Pendiente',
-  `fecha_reclamo` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -196,36 +181,6 @@ INSERT INTO `dias_disponibles` (`id_dia`, `dia`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `entrenadores`
---
-
-CREATE TABLE `entrenadores` (
-  `id_entrenador` int(11) NOT NULL,
-  `nombre` varchar(255) NOT NULL,
-  `especialidad` varchar(255) NOT NULL,
-  `max_personas` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `entrenador_dias_horarios`
---
-
-CREATE TABLE `entrenador_dias_horarios` (
-  `id_disponibilidad` int(11) NOT NULL,
-  `id_entrenador` int(11) NOT NULL,
-  `id_dia` int(11) NOT NULL,
-  `hora_inicio` time NOT NULL,
-  `hora_fin` time NOT NULL,
-  `lugar` varchar(50) NOT NULL,
-  `tipo_entrenamiento` enum('Individual','Grupal') NOT NULL,
-  `capacidad` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `gestion_sanciones`
 --
 
@@ -234,7 +189,7 @@ CREATE TABLE `gestion_sanciones` (
   `id_sancion` int(11) NOT NULL,
   `nombre_cliente` varchar(255) NOT NULL,
   `faltas` int(11) NOT NULL DEFAULT 0,
-  `estado` enum('A','B','I','') NOT NULL DEFAULT 'A',
+  `estado` enum('Activo','Inactivo') NOT NULL,
   `fecha_sancion` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
@@ -243,7 +198,7 @@ CREATE TABLE `gestion_sanciones` (
 --
 
 INSERT INTO `gestion_sanciones` (`idcliente`, `id_sancion`, `nombre_cliente`, `faltas`, `estado`, `fecha_sancion`) VALUES
-(1, 7, 'VIVIANA', 3, 'A', '2024-10-27 05:00:00'),
+(1, 7, 'VIVIANA', 3, '', '2024-10-27 05:00:00'),
 (2, 8, 'Rut', 1, '', '2024-10-27 05:00:00'),
 (1, 12, 'Rut', 3, '', '2024-11-07 05:00:00'),
 (2, 13, 'Fred Pastor', 1, '', '2024-11-07 05:00:00'),
@@ -270,7 +225,10 @@ CREATE TABLE `horario_treno` (
 
 INSERT INTO `horario_treno` (`id_programacion`, `id_contrato`, `id_dia`, `id_hora`, `estado`, `id_local`) VALUES
 (8, 710, 4, 2, 'Activo', 1),
-(9, 711, 6, 6, 'Activo', 2);
+(9, 711, 6, 6, 'Activo', 2),
+(10, 709, 4, 8, 'Activo', 2),
+(11, 710, 7, 1, 'Activo', 1),
+(12, 711, 4, 9, 'Activo', 2);
 
 -- --------------------------------------------------------
 
@@ -353,7 +311,8 @@ CREATE TABLE `locales` (
 INSERT INTO `locales` (`id_local`, `nombre_parque`, `direccion`, `capacidad`, `descripcion`) VALUES
 (1, 'Parque Miraflores', 'Av. Las Flores 123, Miraflores', 10, 'Entrenamiento funcional y cardio.'),
 (2, 'Parque del Sol', 'Avenida Primavera 123, Miraflores', 10, 'Un parque amplio con zonas para ejercicio al aire libre.'),
-(3, 'Parque Los Cedros', 'Jirón Los Cedros 123, Lince', 1, 'Un lugar tranquilo para meditación y entrenamientos ligeros.');
+(3, 'Parque Los Cedros', 'Jirón Los Cedros 123, Lince', 1, 'Un lugar tranquilo para meditación y entrenamientos ligeros.'),
+(4, 'Instalaciones', 'Av. Universitaria 1801, San Miguel 15088', 100000, 'Instalación propia de la empresa');
 
 -- --------------------------------------------------------
 
@@ -499,45 +458,29 @@ INSERT INTO `reclamos` (`id_reclamo`, `tipo`, `detalle`, `fecha_reclamo`, `estad
 -- --------------------------------------------------------
 
 --
--- Table structure for table `reporte_gestion`
+-- Table structure for table `reserva`
 --
 
-CREATE TABLE `reporte_gestion` (
-  `id_reporte_gestion` int(11) NOT NULL,
-  `fecha_generacion` datetime NOT NULL,
-  `tipo_reporte` varchar(50) NOT NULL,
-  `cantidad_reclamos` int(11) NOT NULL,
-  `cantidad_sanciones` int(11) NOT NULL,
-  `tiempo_promedio_resolucion` int(11) NOT NULL,
-  `satisfaccion_cliente` int(11) NOT NULL,
-  `observaciones` text NOT NULL,
-  `idusuario` int(11) NOT NULL,
-  `idreclamo` int(11) NOT NULL,
-  `id_sancion` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-
--- --------------------------------------------------------
+CREATE TABLE `reserva` (
+  `id_reserva` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `id_programacion` int(11) NOT NULL,
+  `fecha_reserva` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `tipo_reserva` varchar(50) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `sancion` varchar(50) NOT NULL,
+  `cant_sancion` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Table structure for table `reserva_entrenamientos`
+-- Dumping data for table `reserva`
 --
 
-CREATE TABLE `reserva_entrenamientos` (
-  `idreserva` int(11) NOT NULL,
-  `idcliente` text NOT NULL,
-  `nombre_cliente` varchar(255) NOT NULL,
-  `fecha_reserva` date DEFAULT NULL,
-  `tipo_entrenamiento` enum('Grupal','Individual','','') NOT NULL,
-  `num_participantes` int(2) NOT NULL,
-  `lugar_entrenamiento` enum('Aire Libre','Instalaciones','','') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-
---
--- Dumping data for table `reserva_entrenamientos`
---
-
-INSERT INTO `reserva_entrenamientos` (`idreserva`, `idcliente`, `nombre_cliente`, `fecha_reserva`, `tipo_entrenamiento`, `num_participantes`, `lugar_entrenamiento`) VALUES
-(14, 'rut.benites@gmail.com', 'Rut Benites', '2024-11-12', 'Individual', 1, 'Instalaciones');
+INSERT INTO `reserva` (`id_reserva`, `id_usuario`, `id_programacion`, `fecha_reserva`, `tipo_reserva`, `cantidad`, `sancion`, `cant_sancion`) VALUES
+(18, 2, 11, '2024-12-06 21:46:10', 'Grupal', 7, 'No', 0),
+(19, 2, 10, '2024-12-06 21:46:25', 'Individual', 1, 'No', 0),
+(20, 2, 10, '2024-12-06 21:46:17', 'Grupal', 7, 'Sí', 10),
+(21, 2, 10, '2024-12-07 02:48:08', 'Grupal', 7, '', 0);
 
 -- --------------------------------------------------------
 
@@ -569,13 +512,6 @@ INSERT INTO `usuario` (`idusuario`, `nombre`, `apellidos`, `fechnac`, `correo`, 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `atencion_reclamos`
---
-ALTER TABLE `atencion_reclamos`
-  ADD PRIMARY KEY (`idreclamo`),
-  ADD KEY `idcliente` (`idcliente`);
 
 --
 -- Indexes for table `captacion_clientes`
@@ -614,18 +550,6 @@ ALTER TABLE `contrato_personal`
 --
 ALTER TABLE `dias_disponibles`
   ADD PRIMARY KEY (`id_dia`);
-
---
--- Indexes for table `entrenadores`
---
-ALTER TABLE `entrenadores`
-  ADD PRIMARY KEY (`id_entrenador`);
-
---
--- Indexes for table `entrenador_dias_horarios`
---
-ALTER TABLE `entrenador_dias_horarios`
-  ADD PRIMARY KEY (`id_disponibilidad`);
 
 --
 -- Indexes for table `gestion_sanciones`
@@ -692,19 +616,10 @@ ALTER TABLE `reclamos`
   ADD KEY `id_cliente` (`id_cliente`(768));
 
 --
--- Indexes for table `reporte_gestion`
+-- Indexes for table `reserva`
 --
-ALTER TABLE `reporte_gestion`
-  ADD PRIMARY KEY (`id_reporte_gestion`),
-  ADD KEY `idusuario` (`idusuario`),
-  ADD KEY `idreclamo` (`idreclamo`,`id_sancion`);
-
---
--- Indexes for table `reserva_entrenamientos`
---
-ALTER TABLE `reserva_entrenamientos`
-  ADD PRIMARY KEY (`idreserva`),
-  ADD KEY `idcliente` (`idcliente`(768));
+ALTER TABLE `reserva`
+  ADD PRIMARY KEY (`id_reserva`);
 
 --
 -- Indexes for table `usuario`
@@ -715,12 +630,6 @@ ALTER TABLE `usuario`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `atencion_reclamos`
---
-ALTER TABLE `atencion_reclamos`
-  MODIFY `idreclamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `captacion_clientes`
@@ -753,22 +662,16 @@ ALTER TABLE `contrato_personal`
   MODIFY `id_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=712;
 
 --
--- AUTO_INCREMENT for table `entrenador_dias_horarios`
---
-ALTER TABLE `entrenador_dias_horarios`
-  MODIFY `id_disponibilidad` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `gestion_sanciones`
 --
 ALTER TABLE `gestion_sanciones`
-  MODIFY `id_sancion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id_sancion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `horario_treno`
 --
 ALTER TABLE `horario_treno`
-  MODIFY `id_programacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_programacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `horas`
@@ -786,7 +689,7 @@ ALTER TABLE `inventario`
 -- AUTO_INCREMENT for table `locales`
 --
 ALTER TABLE `locales`
-  MODIFY `id_local` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_local` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `ordenes_materiales`
@@ -819,16 +722,10 @@ ALTER TABLE `reclamos`
   MODIFY `id_reclamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
--- AUTO_INCREMENT for table `reporte_gestion`
+-- AUTO_INCREMENT for table `reserva`
 --
-ALTER TABLE `reporte_gestion`
-  MODIFY `id_reporte_gestion` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `reserva_entrenamientos`
---
-ALTER TABLE `reserva_entrenamientos`
-  MODIFY `idreserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+ALTER TABLE `reserva`
+  MODIFY `id_reserva` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `usuario`
@@ -839,12 +736,6 @@ ALTER TABLE `usuario`
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `atencion_reclamos`
---
-ALTER TABLE `atencion_reclamos`
-  ADD CONSTRAINT `atencion_reclamos_ibfk_1` FOREIGN KEY (`idcliente`) REFERENCES `cliente` (`idcliente`);
 
 --
 -- Constraints for table `compra_insumos`
