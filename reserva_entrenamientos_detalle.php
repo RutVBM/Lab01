@@ -21,8 +21,8 @@ if ($sAccion == "edit" && !empty($id_reserva)) {
     $sTitulo = "Nueva Reserva de Entrenamiento";
     $sCambioAccion = "insert";
     $id_programacion = "";
-    $tipo_reserva = "Individual"; // Valor predeterminado
-    $cantidad = 1; // Valor predeterminado para 'Individual'
+    $tipo_reserva = "Individual";  // Por defecto, "Individual"
+    $cantidad = 1;  // Si es Individual, la cantidad es 1 por defecto
 }
 
 // Obtener datos de todas las programaciones
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $id_usuario = 1;  // Reemplaza con el ID del usuario actual
     $fecha_reserva = date("Y-m-d H:i:s");
     $tipo_reserva = $_POST["tipo_reserva"];
-    $cantidad = ($tipo_reserva == "Grupal") ? $_POST["cantidad"] : 1; // Si es "Individual", cantidad es 1
+    $cantidad = $_POST["cantidad"];
 
     if ($sAccion == "insert") {
         $sql_insert = "INSERT INTO reserva (id_programacion, id_usuario, fecha_reserva, tipo_reserva, cantidad) VALUES (?, ?, ?, ?, ?)";
@@ -81,17 +81,17 @@ include("sidebar.php");
                         </select>
                     </div>
 
-                    <!-- Tipo de Reserva -->
+                    <!-- Tipo de Reserva (Individual o Grupal) -->
                     <div class="form-group">
                         <label for="tipo_reserva">Tipo de Reserva:</label>
-                        <select name="tipo_reserva" id="tipo_reserva" class="form-control" required>
-                            <option value="Individual" <?= $tipo_reserva == "Individual" ? 'selected' : '' ?>>Individual</option>
-                            <option value="Grupal" <?= $tipo_reserva == "Grupal" ? 'selected' : '' ?>>Grupal</option>
+                        <select name="tipo_reserva" id="tipo_reserva" class="form-control" onchange="toggleCantidadField()" required>
+                            <option value="Individual" <?= $tipo_reserva == 'Individual' ? 'selected' : '' ?>>Individual</option>
+                            <option value="Grupal" <?= $tipo_reserva == 'Grupal' ? 'selected' : '' ?>>Grupal</option>
                         </select>
                     </div>
 
-                    <!-- Cantidad -->
-                    <div class="form-group" id="cantidadDiv" style="display: <?= $tipo_reserva == 'Grupal' ? 'block' : 'none' ?>;">
+                    <!-- Cantidad (solo visible si es Grupal) -->
+                    <div class="form-group" id="cantidad_field" style="<?= $tipo_reserva == 'Grupal' ? '' : 'display:none;' ?>">
                         <label for="cantidad">Cantidad:</label>
                         <input type="number" name="cantidad" id="cantidad" class="form-control" value="<?= $cantidad ?>" <?= $tipo_reserva == 'Individual' ? 'readonly' : '' ?>>
                     </div>
@@ -104,3 +104,22 @@ include("sidebar.php");
 </div>
 
 <?php include("footer.php"); ?>
+
+<script>
+    // Función para ocultar/mostrar el campo de cantidad dependiendo de la opción seleccionada
+    function toggleCantidadField() {
+        const tipoReserva = document.getElementById('tipo_reserva').value;
+        const cantidadField = document.getElementById('cantidad_field');
+        if (tipoReserva === 'Grupal') {
+            cantidadField.style.display = 'block';
+            document.getElementById('cantidad').removeAttribute('readonly');
+        } else {
+            cantidadField.style.display = 'none';
+            document.getElementById('cantidad').setAttribute('readonly', true);
+            document.getElementById('cantidad').value = 1;  // Si es Individual, la cantidad se pone automáticamente a 1
+        }
+    }
+
+    // Llamamos a la función para inicializar el estado del campo al cargar la página
+    document.addEventListener("DOMContentLoaded", toggleCantidadField);
+</script>
